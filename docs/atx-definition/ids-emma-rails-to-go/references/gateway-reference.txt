@@ -1,0 +1,532 @@
+===== FILE: docker-compose.yaml =====
+# Tyk OSS gateway + Postgres + local services.
+#
+# Expected layout next to this file:
+#
+#   .env                     copied from .env.example, never committed
+#   configs/tyk.conf                 gateway config (secret comes from env, not this file)
+#   certs/idsnetwork.org.pem leaf + intermediates + private key, concatenated
+#   apps-src/*.json          API definition templates with ${GATEWAY_SHARED_SECRET}
+#   policies/policies.json   role profiles
+#   sql/bootstrap.sql        roles + schemas, superuser, idempotent
+#   migrations/authz/        shared authz schema (dbmate)
+#
+# Startup order is enforced with service_completed_successfully, so a failed
+# migration stops the dependent service from starting rather than letting it
+# come up and error on every request.
+
+name: ${COMPOSE_NAME:?}
+
+x-restart: &restart
+  restart: unless-stopped
+
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+networks:
+  # Tyk <-> local services. Nothing here can reach a database.
+  edge:
+    driver: bridge
+  # Tyk <-> Redis only. Keeps session storage off the app data network.
+  tyk-data:
+    driver: bridge
+    internal: true
+  # Local services + migration jobs <-> Postgres. Tyk is deliberately absent.
+  app-data:
+    driver: bridge
+    internal: true
+
+services:
+  tyk-valkey:
+    image: valkey/valkey:8.1-alpine
+    # Keys and sessions live ONLY in Redis. There is no Postgres copy and no
+    # rebuild path from the API definitions. Losing this volume means every
+    # department's key stops working until tyk_sync.py reruns, so persistence
+    # is required, not optional.
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --save 900 1
+    volumes:
+      - ./data/redisdata:/data
+    networks: [tyk-data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    <<: [*restart, *logging]
+
+  postgres:
+    image: postgres:18
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ids}
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?set in .env}
+    volumes:
+      - ./data/pgdata:/var/lib/postgresql
+      - ./configs/ids_logic_config/clients/isil_mapping.json:/isil_mapping.json
+    networks: [app-data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-ids}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    <<: [*restart, *logging]
+
+  # ------------------------------------------------------------- migrations
+
+  # Layer 0: roles and schemas. Superuser, because migration roles cannot
+  # CREATE ROLE. Must be idempotent (DO blocks, not bare CREATE ROLE) since
+  # this reruns on every `compose up`.
+  db-bootstrap:
+    image: postgres:18
+    environment:
+      PGPASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DB:-ids}
+      AUTHZ_OWNER_PASSWORD: ${AUTHZ_OWNER_PASSWORD:?}
+      SVC_OWNER_PASSWORD: ${SVC_OWNER_PASSWORD:?}
+      LOGIC_ROLE_PASSWORD: ${LOGIC_ROLE_PASSWORD:?}
+      IRIS_ROLE_PASSWORD: ${IRIS_ROLE_PASSWORD:?}
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        psql -h postgres -U postgres -d "$$POSTGRES_DB" -v ON_ERROR_STOP=1 \
+          -v authz_owner_pw="'$$AUTHZ_OWNER_PASSWORD'" \
+          -v svc_owner_pw="'$$SVC_OWNER_PASSWORD'" \
+          -v logic_role_pw="'$$LOGIC_ROLE_PASSWORD'" \
+          -v iris_role_pw="'$$IRIS_ROLE_PASSWORD'" \
+          -f /sql/bootstrap.sql
+    volumes:
+      - ./sql:/sql:ro
+    networks: [app-data]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    <<: *logging
+
+  # Layer 1: shared authz schema.
+  #
+  # x-migrations-table is NOT optional. All three bundles target the same
+  # database, and golang-migrate defaults to a table named schema_migrations —
+  # without distinct names they would share one version counter and clobber
+  # each other.
+  #
+  # If a migration fails, golang-migrate marks the version dirty and every
+  # later run refuses until resolved:
+  #   docker compose run --rm authz-migrate <same flags> force <version>
+  authz-migrate:
+    image: migrate/migrate:v4.19.1
+    command:
+      - "-path=/migrations"
+      - "-database=postgres://authz_owner:${AUTHZ_OWNER_PASSWORD:?}@postgres:5432/${POSTGRES_DB:-ids}?sslmode=disable&search_path=authz&x-migrations-table=authz_schema_migrations"
+      - "-verbose"
+      - "up"
+    volumes:
+      - ./migrations/authz:/migrations:ro
+    networks: [app-data]
+    depends_on:
+      db-bootstrap:
+        condition: service_completed_successfully
+    restart: "no"
+    <<: *logging
+
+  logic-migrate:
+    container_name: logic-migrate
+    image: ${LOGIC_IMAGE:?}
+    depends_on:
+      authz-migrate:
+        condition: service_completed_successfully
+    networks: [app-data]
+    entrypoint: ["/logic"]
+    command: ["migrate"]
+    environment:
+      DB_URL: postgres://svc_owner:${SVC_OWNER_PASSWORD:?}@postgres:5432/${POSTGRES_DB:-ids}?sslmode=disable&search_path=logic&x-migrations-table=logic_schema_migrations
+      SEED_DB_URL: postgres://svc_owner:${SVC_OWNER_PASSWORD:?}@postgres:5432/${POSTGRES_DB:-ids}?sslmode=disable&search_path=logic
+      GATEWAY_SHARED_SECRET: ${GATEWAY_SHARED_SECRET:?}
+      CONFIG_DIR: /ids_logic_config
+    volumes:
+      - ./configs/ids_logic_config:/ids_logic_config
+
+  iris-migrate:
+    container_name: iris-migrate
+    image: ${IRIS_IMAGE:?}
+    depends_on:
+      authz-migrate:
+        condition: service_completed_successfully
+    networks: [app-data]
+    entrypoint: ["/iris"]
+    command: ["migrate"]
+    environment:
+      DB_URL: postgres://svc_owner:${SVC_OWNER_PASSWORD:?}@postgres:5432/${POSTGRES_DB:-ids}?sslmode=disable&search_path=iris&x-migrations-table=iris_schema_migrations
+      GATEWAY_SHARED_SECRET: ${GATEWAY_SHARED_SECRET:?}
+
+  # --------------------------------------------------------- local services
+  logic:
+    container_name: logic
+    # Deploy sets LOGIC_IMAGE to the pushed digest (registry.idsnetwork.org/logic-api@sha256:...).
+    # The fallback is a LOCAL build tag only — Jenkins never publishes :latest, so this
+    # must not name a registry tag that a `pull` would 404 on. `build:` tags it locally.
+    image: ${LOGIC_IMAGE:?}
+    depends_on:
+      logic-migrate:
+        condition: service_completed_successfully
+    expose: ["8080"]          # expose, never ports — reachable only via Tyk
+    networks: [edge, app-data]
+    environment:
+      SERVERPORT: 8080
+      DB_URL: postgres://logic_role:${LOGIC_ROLE_PASSWORD:?}@postgres:5432/${POSTGRES_DB:-ids}?sslmode=disable
+      GATEWAY_SHARED_SECRET: ${GATEWAY_SHARED_SECRET:?}
+      CONFIG_DIR: /ids_logic_config
+    volumes:
+      - ./configs/ids_logic_config:/ids_logic_config
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    <<: [*restart, *logging]
+
+  iris:
+    container_name: iris
+    # Deploy sets LOGIC_IMAGE to the pushed digest (registry.idsnetwork.org/logic-api@sha256:...).
+    # The fallback is a LOCAL build tag only — Jenkins never publishes :latest, so this
+    # must not name a registry tag that a `pull` would 404 on. `build:` tags it locally.
+    image: ${IRIS_IMAGE:?}
+    depends_on:
+      iris-migrate:
+        condition: service_completed_successfully
+    expose: ["8081"]          # expose, never ports — reachable only via Tyk
+    networks: [edge, app-data]
+    environment:
+      SERVERPORT: 8081
+      DB_URL: postgres://iris_role:${IRIS_ROLE_PASSWORD:?}@postgres:5432/${POSTGRES_DB:-ids}?sslmode=disable
+      GATEWAY_SHARED_SECRET: ${GATEWAY_SHARED_SECRET:?}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:?}
+      PDF_BUCKET_NAME: ${PDF_BUCKET_NAME:?}
+      HTML_BUCKET_NAME: ${HTML_BUCKET_NAME:?}
+      DOWNLOAD_DIR: /pdfs
+    volumes:
+      - ./data/pdfs:/pdfs
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8081/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    <<: [*restart, *logging]
+
+  my-ids:
+    container_name: my-ids
+    image: my-ids:local
+    depends_on:
+      logic:
+        condition: service_started
+      iris:
+        condition: service_started
+    expose: ["80"]          # expose, never ports — reachable only via Tyk
+    networks: [edge, app-data]
+    environment:
+      LOGIC_HOST: postgres
+      LOGIC_DB: ids
+      LOGIC_ROLE: logic_role
+      LOGIC_ROLE_PASSWORD: ${LOGIC_ROLE_PASSWORD:?}
+      LOGIC_HOST_NAME: https://logic-dev.idsnetwork.org
+      GATEWAY_SHARED_SECRET: ${GATEWAY_SHARED_SECRET:?}
+      CONFIG_DIR: /ids_logic_config
+    volumes:
+      - ./configs/ids_logic_config:/ids_logic_config
+    <<: [*restart, *logging]
+
+  # ------------------------------------------------------------ api gateway
+
+  # Tyk API definitions have no env-var interpolation, so the shared secret
+  # would otherwise have to be committed. Render templates into a volume at
+  # startup instead. tyk.conf does NOT need this — it takes TYK_GW_* env
+  # overrides directly.
+  tyk-render:
+    image: alpine:3.21
+    environment:
+      GATEWAY_SHARED_SECRET: ${GATEWAY_SHARED_SECRET:?}
+      IRIS_DOMAIN: ${IRIS_DOMAIN:?}
+      LOGIC_DOMAIN: ${LOGIC_DOMAIN:?}
+      MY_IDS_DOMAIN: ${MY_IDS_DOMAIN:?}
+    command: >
+      sh -c "apk add --no-cache gettext >/dev/null &&
+             rm -f /out/*.json &&
+             for f in /src/*.json; do
+               envsubst '$$GATEWAY_SHARED_SECRET $$IRIS_DOMAIN $$LOGIC_DOMAIN $$MY_IDS_DOMAIN' < \"$$f\" > \"/out/$$(basename $$f)\";
+             done &&
+             echo rendered: && ls -1 /out"
+    volumes:
+      - ./apps-src:/src:ro
+      - ./data/tykapps:/out
+    restart: "no"
+    <<: *logging
+
+  tyk-gateway:
+    image: tykio/tyk-gateway:v5.13.2
+    environment:
+      # Overrides the value in tyk.conf so the admin secret stays out of git.
+      TYK_GW_SECRET: ${TYK_SECRET:?}
+      TYK_GW_ENABLECUSTOMDOMAINS: "true"
+    ports:
+      # 0.0.0.0:443 in production. If staging shares a host, give it either a
+      # second IP (BIND_ADDR=203.0.113.11) or a different port
+      # (HTTPS_PORT=8443) — only one process can hold 443 on an interface.
+      - "${BIND_ADDR:-0.0.0.0}:${HTTPS_PORT:-443}:8080"
+      # control API on 9090 deliberately NOT published
+    volumes:
+      - ./configs/tyk.conf:/opt/tyk-gateway/tyk.conf:ro
+      - ./certs:/certs:ro
+      - ./policies:/opt/tyk-gateway/policies:ro
+      - ./data/tykapps:/opt/tyk-gateway/apps:ro
+    networks: [edge, tyk-data]
+    depends_on:
+      tyk-valkey:
+        condition: service_healthy
+      tyk-render:
+        condition: service_completed_successfully
+      logic:
+        condition: service_started
+      iris:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/hello"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    <<: [*restart, *logging]
+
+  # -------------------------------------------------------------- key sync
+  # Not started by default. Run on demand:
+  #   docker compose run --rm tyk-sync
+  tyk-sync:
+    profiles: ["tools"]
+    image: python:3.13-alpine
+    environment:
+      TYK_URL: http://tyk-gateway:9090
+      TYK_SECRET: ${TYK_SECRET:?}
+      DATABASE_URL: postgres://svc_owner:${SVC_OWNER_PASSWORD:?}@postgres:5432/${POSTGRES_DB:-ids}?sslmode=disable
+    command: ["python3", "/app/tyk_sync.py"]
+    volumes:
+      - ./tyk_sync.py:/app/tyk_sync.py:ro
+    networks: [edge, app-data]
+    restart: "no"
+    <<: *logging
+
+
+===== FILE: apps-src/iris.json =====
+{
+  "name": "IRIS",
+  "api_id": "iris",
+  "org_id": "default",
+  "active": true,
+  "domain": "${IRIS_DOMAIN}",
+  "use_keyless": false,
+  "use_standard_auth": true,
+  "auth_configs": {
+    "authToken": { "auth_header_name": "Authorization" }
+  },
+  "enable_context_vars": true,
+  "strip_auth_data": true,
+  "version_data": {
+    "not_versioned": true,
+    "default_version": "Default",
+    "versions": {
+      "Default": {
+        "name": "Default",
+        "use_extended_paths": true,
+        "global_headers": {
+          "X-School-Id": "$tyk_meta.school_id",
+          "X-Library-Id": "$tyk_meta.library_id",
+          "X-Scope-Level": "$tyk_meta.scope_level",
+          "X-Request-Id": "$tyk_context.request_id",
+          "X-Gateway-Auth": "${GATEWAY_SHARED_SECRET}"
+        },
+        "global_headers_remove": [
+          "X-School-Id", "X-Library-Id", "X-Scope-Level",
+          "X-Request-Id", "X-Gateway-Auth"
+        ]
+      }
+    }
+  },
+  "proxy": {
+    "listen_path": "/",
+    "target_url": "http://iris:8081",
+    "strip_listen_path": true
+  }
+}
+
+===== FILE: apps-src/logic.json =====
+{
+  "name": "Logic",
+  "api_id": "logic",
+  "org_id": "default",
+  "active": true,
+  "domain": "${LOGIC_DOMAIN}",
+  "use_keyless": false,
+  "use_standard_auth": true,
+  "auth_configs": {
+    "authToken": { "auth_header_name": "Authorization" }
+  },
+  "enable_context_vars": true,
+  "strip_auth_data": true,
+  "version_data": {
+    "not_versioned": true,
+    "default_version": "Default",
+    "versions": {
+      "Default": {
+        "name": "Default",
+        "use_extended_paths": true,
+        "global_headers": {
+          "X-School-Id": "$tyk_meta.school_id",
+          "X-Library-Id": "$tyk_meta.library_id",
+          "X-Scope-Level": "$tyk_meta.scope_level",
+          "X-Request-Id": "$tyk_context.request_id",
+          "X-Gateway-Auth": "${GATEWAY_SHARED_SECRET}"
+        },
+        "global_headers_remove": [
+          "X-School-Id", "X-Library-Id", "X-Scope-Level",
+          "X-Request-Id", "X-Gateway-Auth"
+        ]
+      }
+    }
+  },
+  "proxy": {
+    "listen_path": "/",
+    "target_url": "http://logic:8080",
+    "strip_listen_path": true
+  }
+}
+
+===== FILE: apps-src/my-ids.json =====
+{
+  "name": "My IDS",
+  "api_id": "my-ids",
+  "org_id": "default",
+  "active": true,
+  "domain": "${MY_IDS_DOMAIN}",
+  "use_keyless": true,
+  "enable_context_vars": true,
+  "strip_auth_data": true,
+  "version_data": {
+    "not_versioned": true,
+    "default_version": "Default",
+    "versions": {
+      "Default": {
+        "name": "Default",
+        "use_extended_paths": true,
+        "global_headers": {
+          "X-School-Id": "$tyk_meta.school_id",
+          "X-Library-Id": "$tyk_meta.library_id",
+          "X-Scope-Level": "$tyk_meta.scope_level",
+          "X-Request-Id": "$tyk_context.request_id",
+          "X-Gateway-Auth": "${GATEWAY_SHARED_SECRET}"
+        },
+        "global_headers_remove": [
+          "X-School-Id", "X-Library-Id", "X-Scope-Level",
+          "X-Request-Id", "X-Gateway-Auth"
+        ]
+      }
+    }
+  },
+  "proxy": {
+    "listen_path": "/",
+    "target_url": "http://my-ids:80",
+    "strip_listen_path": true
+  }
+}
+
+===== FILE: policies/policies.json =====
+{
+  "admin": {
+    "id": "admin",
+    "name": "IDS Network Admin",
+    "org_id": "default",
+    "active": true,
+    "rate": -1,
+    "per": -1,
+    "quota_max": -1,
+    "access_rights": {
+      "logic": {
+        "api_id": "logic",
+        "api_name": "Logic",
+        "versions": ["Default"],
+        "allowed_urls": [
+            { "url": "^/(.*)?$", "methods": ["GET", "POST", "PUT", "DELETE"] },
+            { "url": "^/datasets/[^/]+/grants(/.*)?$", "methods": ["GET","POST","DELETE"] }
+        ]
+      },
+      "iris": {
+        "api_id": "iris",
+        "api_name": "IRIS",
+        "versions": ["Default"],
+        "allowed_urls": [
+            { "url": "^/(.*)?$", "methods": ["GET", "POST", "PUT", "DELETE"] },
+            { "url": "^/datasets/[^/]+/grants(/.*)?$", "methods": ["GET","POST","DELETE"] }
+        ]
+      }
+    },
+    "meta_data": { "role": "admin" }
+  },
+  "logic-writer": {
+    "id": "logic-writer",
+    "name": "Logic write",
+    "org_id": "default",
+    "active": true,
+    "rate": 100,
+    "per": 60,
+    "quota_max": -1,
+    "access_rights": {
+      "logic": {
+        "api_id": "logic",
+        "api_name": "Logic",
+        "versions": ["Default"],
+        "allowed_urls": [{ "url": "^/(.*)?$", "methods": ["GET", "POST", "PUT", "DELETE"] }]
+      }
+    },
+    "meta_data": { "role": "writer" },
+    "partitions": {
+        "acl": true,
+        "rate_limit": false,
+        "quota": false
+    }
+  },
+  "iris-writer": {
+    "id": "iris-writer",
+    "name": "IRIS write",
+    "org_id": "default",
+    "active": true,
+    "rate": 100,
+    "per": 60,
+    "quota_max": -1,
+    "access_rights": {
+      "iris": {
+        "api_id": "iris",
+        "api_name": "IRIS",
+        "versions": ["Default"],
+        "allowed_urls": [{ "url": "^/(.*)?$", "methods": ["GET", "POST", "PUT", "DELETE"] }]
+      }
+    },
+    "meta_data": { "role": "writer" },
+    "partitions": {
+        "acl": true,
+        "rate_limit": false,
+        "quota": false
+    }
+  }
+}
+

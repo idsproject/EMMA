@@ -1,4 +1,4 @@
-# AWS Transform custom: EMMA Rails-to-Go Transformation Definition (Draft v0.5)
+# AWS Transform custom: EMMA Rails-to-Go Transformation Definition (Draft v0.6)
 
 Source: https://github.com/uvalib/emma (Ruby 3.4.1, Rails 8.0.2, PostgreSQL)
 Companion source: https://github.com/uvalib/emma-ia (Python, Internet Archive submission processor)
@@ -161,7 +161,11 @@ directly.
    `GATEWAY_SHARED_SECRET` environment variable (same variable name the other
    services use). Compare in constant time (crypto/subtle). Reject anything else
    with 403 before routing, except `/healthz`, which the container health check
-   calls directly.
+   calls directly. Local development: when `DEPLOYMENT=local` and
+   `GATEWAY_SHARED_SECRET` is empty, skip this check and log a warning at
+   startup; in that mode do not trust X-Forwarded-*, `X-School-Id`,
+   `X-Library-Id` or `X-Scope-Level`. In any other deployment, refuse to start
+   if `GATEWAY_SHARED_SECRET` is empty.
 2. **Health check**: add `GET /healthz` returning 200 with no auth and no
    database-heavy work, to match the compose health checks (curl -fsS).
 3. **Request id**: use `X-Request-Id` from the gateway as the request id in
@@ -309,7 +313,9 @@ Specifically:
 
 - `cmd/<name>/main.go` with a `migrate` subcommand (`/emma migrate`,
   `/emma-index migrate`) that runs golang-migrate from `MIGRATIONS_DIR`, as
-  IRIS does; the gateway compose stack runs it as a one-shot service before
+  IRIS does. CRITICAL: golang-migrate records versions in a table named
+  `go_schema_migrations` (x-migrations-table), never `schema_migrations`,
+  which Rails uses; the gateway compose stack runs it as a one-shot service before
   the main container starts.
 - `app/` for wiring (Application struct holding logger and models, routes,
   server with graceful shutdown), `handler/` for HTTP handlers grouped by
@@ -386,9 +392,17 @@ refuse to start with that flag set unless `DEPLOYMENT=local`.
 
 Running the Rails system tests against Go: set `APP_HOST` to the Go server's
 URL. test/application_system_test_case.rb then sets `Capybara.app_host` to it
-and `Capybara.run_server = false`. The Go server must use the same test
-database (`emma_test`) with the Rails fixtures loaded, so both apps see the
-same orgs, users and uploads.
+and `Capybara.run_server = false`. For parity runs the Go server uses its own
+database, `emma_go_test`, created by `emma migrate`. The Rails test runner
+loads its fixtures into that database (`DBNAME=emma_go_test` with `APP_HOST`
+set) without reloading db/schema.rb, so every table and column that
+test/fixtures/*.yml writes must exist in the Go migrations with the same name
+and a compatible type.
+
+Slice status: the transformation marks a slice `built, validation pending`
+when any section 8 check could not be run. A maintainer runs those checks
+outside the transformation and changes the status to `done` in
+go/TRANSLATION_PROGRESS.md; only then can the next slice start.
 
 Reference app: run the Rails app locally only, as the reference for parity
 tests. Point its `SERVICE_SEARCH_*` and `SERVICE_INGEST_*` settings at the new

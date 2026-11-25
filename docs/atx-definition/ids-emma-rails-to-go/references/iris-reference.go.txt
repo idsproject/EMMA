@@ -1,0 +1,1456 @@
+===== FILE: .golangci.yaml =====
+version: "2"
+formatters:
+  enable:
+    - gofmt
+linters:
+  enable:
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - copyloopvar
+    # - cyclop
+    - decorder
+    # - depguard
+    - dupl
+    # - embeddedstructfieldcheck
+    - err113
+    - errorlint
+    - exptostd
+    - forbidigo
+    - forcetypeassert
+    # - gocognit
+    - goconst
+    - gocritic
+    - godoclint
+    - gosec
+    - intrange
+    - misspell
+    - modernize
+    - musttag
+    # - nestif
+    - nilerr
+    - perfsprint
+    - prealloc
+    - predeclared
+    - sqlclosecheck
+    # - unused
+    - usestdlibvars
+  settings:
+    errcheck:
+      check-type-assertions: true
+      exclude-functions:
+       - (io.ReadCloser).Close
+    govet:
+      enable-all: true
+    gosec:
+      config:
+        G306: "0644"
+
+===== FILE: Makefile =====
+GO ?= go
+LINTER ?= golangci-lint
+COMPOSE_DIR ?= /opt/ids-gateway
+SERVICE ?= iris
+IMAGE_VAR ?= IRIS_IMAGE
+SSH_OPTS := -o StrictHostKeyChecking=accept-new \
+            -o BatchMode=yes \
+            -o ConnectTimeout=10
+MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+DEPLOY_SCRIPT := $(MAKEFILE_DIR)bin/deploy-remote.sh
+
+.PHONY: all format build test lint lint-fix deploy local-spinup local-update
+
+all: build test format lint
+
+format:
+	$(GO) fmt ./...
+
+build:
+	$(GO) build -o iris ./cmd/iris
+
+test:
+	$(GO) test ./...
+
+lint:
+	$(LINTER) run
+
+lint-fix:
+	$(LINTER) run --fix
+
+deploy:
+	@test -n "$(IMAGE)"   || { echo "IMAGE is required";   exit 1; }
+	@test -n "$(HOST)"    || { echo "HOST is required";    exit 1; }
+	@test -n "$(SSH_KEY)" || { echo "SSH_KEY is required (set by withCredentials)"; exit 1; }
+	@test -s "$(DEPLOY_SCRIPT)" || { echo "missing or empty $(DEPLOY_SCRIPT)"; exit 1; }
+	@echo "deploying $(SERVICE) to $(HOST) [$(ENVIRONMENT)]"
+	ssh -i "$(SSH_KEY)" $(SSH_OPTS) "$(HOST)" \
+		IMAGE_VAR="$(IMAGE_VAR)" \
+		IMAGE_REF="$(IMAGE)" \
+		COMPOSE_DIR="$(COMPOSE_DIR)" \
+		SERVICE="$(SERVICE)" \
+		ENVIRONMENT="$(ENVIRONMENT)" \
+		bash -se < "$(DEPLOY_SCRIPT)"
+
+local:
+	if ! docker network inspect local-iris-net >/dev/null 2>&1; then \
+		docker network create local-iris-net; \
+	fi
+	if [ -z "$$(docker ps -a -q -f name=^local-iris-postgres$$)" ]; then \
+		echo "WTF IS HAPPENING"; \
+		docker run -d --name local-iris-postgres --network local-iris-net --env-file .env postgres; \
+	fi
+	if [ -n "$$(docker ps -a -q -f name=^local-iris-api$$)" ]; then \
+		docker stop local-iris-api; \
+		docker rm local-iris-api; \
+	fi
+	docker build -t iris:local ./
+	docker run --rm --network local-iris-net --env-file .env --entrypoint /iris iris:local migrate
+	docker run -d --name local-iris-api --network local-iris-net --env-file .env -p "127.0.0.1:8080:8080" -v ./data/pdfs:/pdfs iris:local
+
+local-spinup:
+	docker network create iris-test
+	docker run -d --name iris-postgres --network iris-test --env-file .env postgres
+	docker build -t iris ./
+	docker run -d --name iris --network iris-test --env-file .env -p "127.0.0.1:8080:8080" iris
+
+local-update:
+	docker build -t iris ./ \
+	&& docker stop iris \
+	&& docker rm iris \
+	&& docker run -d --name iris --network iris-test --env-file .env -p "127.0.0.1:8080:8080" \
+		-v ./test_pdfs:/test_pdfs iris
+
+===== FILE: app/app.go =====
+// Package app wires together and runs the iris HTTP API: it
+// opens the database pool, runs migrations, builds the router
+// with its middleware, and serves requests with graceful shutdown.
+package app
+
+import (
+	"context"
+	"log/slog"
+	"os"
+	"sync"
+
+	"github.com/idsproject/iris/internal/data"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+// Application holds the shared dependencies of the running service:
+// the logger, the data-access models, and a wait group for
+// tracking background tasks during shutdown.
+type Application struct {
+	Logger *slog.Logger
+	Models data.Models
+	Wg     sync.WaitGroup
+}
+
+// GetLogger returns the application logger.
+func (app *Application) GetLogger() *slog.Logger {
+	return app.Logger
+}
+
+// GetModels returns the data-access models.
+func (app *Application) GetModels() data.Models {
+	return app.Models
+}
+
+// Run starts the service: it opens the database pool,
+// applies migrations, and serves HTTP until the process is signalled to stop.
+// It returns the first error that prevents startup or clean shutdown.
+func Run(ctx context.Context) error {
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+	dbpool, err := pgxpool.New(context.Background(), os.Getenv("DB_URL"))
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+	defer dbpool.Close()
+
+	app := &Application{
+		Logger: logger,
+		Models: data.NewModels(dbpool),
+	}
+
+	err = app.serve()
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func RunMigrations() error {
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+	from, to, dirty, err := data.RunMigrations(os.Getenv("MIGRATIONS_DIR"), os.Getenv("DB_URL"))
+	if err != nil {
+		logger.Error("Failed migrations", "err", err)
+		return err
+	}
+	logger.Info("Migrations success", "fromVersion", from, "toVersion", to, "dirty", dirty)
+
+	return nil
+}
+
+===== FILE: app/routes.go =====
+package app
+
+import (
+	"net/http"
+
+	"github.com/idsproject/iris/handler"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+)
+
+func (app *Application) routes() http.Handler {
+	mainHandler := handler.CreateMainHandler(app.Logger, &app.Models.Logs, &app.Models.Tracking)
+	testHandler := handler.CreateTestHandler(app.Logger, &app.Models.Logs)
+
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.ClientIPFromHeader("X-Real-IP"))
+	router.Use(middleware.Recoverer)
+	// router.Use(app.authenticate)
+
+	router.Get("/healthz", HandleHealthz)
+	router.Get("/robots.txt", ServeRobots)
+
+	router.Route("/v1", func(router chi.Router) {
+		// router.Use(app.requireAuthenticatedUser)
+		router.Group(mainHandler.Routes)
+		router.Route("/tests", testHandler.Routes)
+	})
+
+	return router
+}
+
+func HandleHealthz(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("OK")) //nolint:errcheck,gosec
+}
+
+func ServeRobots(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./robots.txt")
+}
+
+===== FILE: app/server.go =====
+package app
+
+import (
+	"context"
+	"errors"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+)
+
+// serve runs the HTTP server on $SERVERPORT until it receives SIGINT or
+// SIGTERM, then shuts down gracefully, waiting for in-flight background tasks
+// to finish before returning.
+func (app *Application) serve() error {
+	srv := &http.Server{
+		Addr:         ":" + os.Getenv("SERVERPORT"),
+		Handler:      app.routes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
+	shutdownError := make(chan error)
+
+	go func() {
+		quit := make(chan os.Signal, 1)
+		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+		s := <-quit
+
+		app.Logger.Info("caught signal", "signal", s.String())
+
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+
+		err := srv.Shutdown(ctx)
+		if err != nil {
+			shutdownError <- err
+		}
+
+		app.Logger.Info("completed background tasks", "addr", srv.Addr)
+
+		app.Wg.Wait()
+		shutdownError <- nil
+	}()
+
+	app.Logger.Info("starting server", "addr", srv.Addr)
+
+	err := srv.ListenAndServe()
+	if !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+
+	err = <-shutdownError
+	if err != nil {
+		return err
+	}
+
+	app.Logger.Info("stopped server", "addr", srv.Addr)
+
+	return nil
+}
+
+===== FILE: aws/aws.go =====
+package aws
+
+import (
+	"context"
+	"errors"
+	"io"
+	"time"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	tm "github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	// "github.com/aws/aws-sdk-go-v2/service/s3/types"
+)
+
+const partMiBs int64 = 5
+const thresholdMiBs int64 = 10
+
+var ErrBadPath = errors.New("bad file path")
+var ErrLoadConfig = errors.New("error loading AWS SDK config")
+var ErrCallS3 = errors.New("error calling S3")
+
+type AwsS3Connection struct {
+	ctx       context.Context
+	s3Client  *s3.Client
+	tManager  *tm.Client
+	awsConfig aws.Config
+}
+
+type BucketObject struct {
+	Key  string
+	Size int64
+}
+
+func NewAwsS3Connection(ctx context.Context) (*AwsS3Connection, error) {
+	sdkConfig, err := config.LoadDefaultConfig(ctx)
+	if err != nil {
+		return nil, errors.Join(ErrLoadConfig, err)
+	}
+
+	s3Client := s3.NewFromConfig(sdkConfig)
+
+	tManClient := tm.New(s3Client, func(opts *tm.Options) {
+		opts.PartSizeBytes = partMiBs * 1024 * 1024
+		opts.MultipartUploadThreshold = thresholdMiBs * 1024 * 1024
+	})
+
+	return &AwsS3Connection{
+		ctx:       ctx,
+		awsConfig: sdkConfig,
+		s3Client:  s3Client,
+		tManager:  tManClient,
+	}, nil
+}
+
+func (conn *AwsS3Connection) getBuckets() ([]string, error) {
+	result, err := conn.s3Client.ListBuckets(conn.ctx, &s3.ListBucketsInput{})
+	if err != nil {
+		return nil, errors.Join(ErrCallS3, err)
+	}
+
+	buckets := make([]string, 0)
+	for _, bucket := range result.Buckets {
+		buckets = append(buckets, *bucket.Name)
+	}
+
+	return buckets, nil
+}
+
+func (conn *AwsS3Connection) uploadFile(file io.Reader, bucketName, objectKey string, fileSize *int64) error {
+	input := &tm.UploadObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(objectKey),
+		Body:   file,
+	}
+	if fileSize != nil {
+		input.ContentLength = fileSize
+	}
+
+	_, err := conn.tManager.UploadObject(conn.ctx, input)
+	if err != nil {
+		return err
+	}
+
+	err = s3.NewObjectExistsWaiter(conn.s3Client).Wait(
+		conn.ctx,
+		&s3.HeadObjectInput{Bucket: aws.String(bucketName), Key: aws.String(objectKey)},
+		time.Minute)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (conn *AwsS3Connection) listObjects(bucketName string) ([]BucketObject, error) {
+	var objects []BucketObject
+
+	objectPaginator := s3.NewListObjectsV2Paginator(conn.s3Client, &s3.ListObjectsV2Input{
+		Bucket: aws.String(bucketName),
+	})
+	for objectPaginator.HasMorePages() {
+		output, err := objectPaginator.NextPage(conn.ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, object := range output.Contents {
+			objects = append(objects, BucketObject{
+				Key:  *object.Key,
+				Size: *object.Size,
+			})
+		}
+	}
+	return objects, nil
+}
+
+func (conn *AwsS3Connection) downloadFile(bucketName, objectKey string) ([]byte, error) {
+	buffer := manager.NewWriteAtBuffer([]byte{})
+	_, err := conn.tManager.DownloadObject(conn.ctx, &tm.DownloadObjectInput{
+		Bucket:   aws.String(bucketName),
+		Key:      aws.String(objectKey),
+		WriterAt: buffer,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return buffer.Bytes(), nil
+}
+
+func (conn *AwsS3Connection) deleteFile(bucketName, objectKey, versionId string, bypassGovernance bool) error {
+	input := &s3.DeleteObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(objectKey),
+	}
+	if versionId != "" {
+		input.VersionId = aws.String(versionId)
+	}
+	if bypassGovernance {
+		input.BypassGovernanceRetention = aws.Bool(true)
+	}
+
+	_, err := conn.s3Client.DeleteObject(conn.ctx, input)
+	if err != nil {
+		return err
+	}
+
+	err = s3.NewObjectNotExistsWaiter(conn.s3Client).Wait(
+		conn.ctx,
+		&s3.HeadObjectInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(objectKey),
+		},
+		time.Minute)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+===== FILE: aws/files.go =====
+package aws
+
+import (
+	"context"
+	"io"
+	"os"
+	"strings"
+)
+
+func UploadArticle(file io.Reader, fileName string, fileSize *int64) error {
+	awsConn, err := NewAwsS3Connection(context.Background())
+	if err != nil {
+		return err
+	}
+
+	bucketName := os.Getenv("PDF_BUCKET_NAME")
+	objectKey := "pdf/" + fileName
+
+	err = awsConn.uploadFile(file, bucketName, objectKey, fileSize)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DownloadArticle(fileName string) error {
+	awsConn, err := NewAwsS3Connection(context.Background())
+	if err != nil {
+		return err
+	}
+
+	bucketName := os.Getenv("PDF_BUCKET_NAME")
+	downloadDir := os.Getenv("DOWNLOAD_DIR") + "/" + fileName
+	objectName := "result/COMPLIANT_" + fileName
+
+	objects, err := awsConn.listObjects(bucketName)
+	if err != nil {
+		return err
+	}
+
+	for _, object := range objects {
+		parts := strings.Split(object.Key, "/")
+		if parts[0] == "result" && parts[1] == "COMPLIANT_"+fileName {
+			data, err := awsConn.downloadFile(bucketName, objectName)
+			if err != nil {
+				return err
+			}
+
+			err = os.WriteFile(downloadDir, data, 0644) // #nosec G703
+			if err != nil {
+				return err
+			}
+
+			err = awsConn.deleteFile(bucketName, objectName, "", false)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+===== FILE: aws/util.go =====
+package aws
+
+import (
+	"context"
+	"os"
+)
+
+func GetBuckets() ([]string, error) {
+	awsConn, err := NewAwsS3Connection(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return awsConn.getBuckets()
+}
+
+func ListObjects() ([]BucketObject, error) {
+	awsConn, err := NewAwsS3Connection(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	bucketName := os.Getenv("PDF_BUCKET_NAME")
+
+	return awsConn.listObjects(bucketName)
+}
+
+===== FILE: cmd/iris/main.go =====
+// Command iris is the entry point for the iris HTTP API server. It
+// delegates to [app.Run], exiting non-zero if the server fails to start or shut
+// down cleanly.
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/idsproject/iris/app"
+)
+
+func main() {
+	os.Exit(mainErr())
+}
+
+func mainErr() int {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := run(ctx, os.Args[1:]); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	return 0
+}
+
+// run starts the application with a cancellable background context.
+func run(ctx context.Context, args []string) error {
+	if len(args) > 0 && args[0] == "migrate" {
+		return app.RunMigrations()
+	}
+	return app.Run(ctx)
+}
+
+===== FILE: go.mod =====
+module github.com/idsproject/iris
+
+go 1.26.6
+
+require (
+	github.com/aws/aws-sdk-go-v2 v1.43.7
+	github.com/aws/aws-sdk-go-v2/config v1.32.38
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.22.44
+	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.3.15
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.107.3
+	github.com/go-chi/chi/v5 v5.3.2
+	github.com/golang-migrate/migrate/v4 v4.19.1
+	github.com/jackc/pgx/v5 v5.10.0
+	github.com/ledongthuc/pdf v0.0.0-20260907135840-6c8c28e0e8a0
+)
+
+require (
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.18 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.37 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.38 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.38 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.38 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.39 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.17 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.9.31 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.38 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.39 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.5.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.33.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.38.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.45.7 // indirect
+	github.com/aws/smithy-go v1.27.9 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/puddle/v2 v2.2.2 // indirect
+	github.com/lib/pq v1.12.3 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/text v0.41.0 // indirect
+)
+
+===== FILE: handler/mainHandler.go =====
+package handler
+
+import (
+	"encoding/json"
+	"errors"
+	"log/slog"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
+
+	"github.com/idsproject/iris/aws"
+	"github.com/idsproject/iris/util"
+
+	"github.com/idsproject/iris/internal/data"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/ledongthuc/pdf"
+)
+
+const maxUploadFileSize = 700 // in MB
+const fileSizeThreshold = 50  // in MB
+
+const PricePerPage = 0.15
+
+type Notify struct {
+	Sender  string `json:"sender"`
+	Status  string `json:"status"`
+	File    string `json:"file"`
+	Message string `json:"message"`
+}
+
+type ReportResponse struct {
+	Data       []data.Tracking `json:"data"`
+	TotalPages int             `json:"total_pages"`
+	TotalCost  float64         `json:"total_cost"`
+}
+
+type MainHandler struct {
+	Logger        *slog.Logger
+	LogsModel     *data.LogsModel
+	TrackingModel *data.TrackingModel
+}
+
+func CreateMainHandler(logger *slog.Logger, logsModel *data.LogsModel, trackingModel *data.TrackingModel) *MainHandler {
+	return &MainHandler{
+		Logger:        logger,
+		LogsModel:     logsModel,
+		TrackingModel: trackingModel,
+	}
+}
+
+func (handler *MainHandler) Routes(router chi.Router) {
+	router.Get("/healthz", handler.HandleHealthz)
+	router.Post("/upload", handler.HandleUpload)
+	router.Get("/status/{filename}", handler.HandleStatus)
+	router.Get("/download/{filename}", handler.HandleDownload)
+	router.Post("/notify", handler.HandleNotify)
+	router.Get("/report", handler.HandleReport)
+}
+
+func (handler *MainHandler) HandleHealthz(w http.ResponseWriter, r *http.Request) {
+	_, err := w.Write([]byte("OK"))
+	if err != nil {
+		handler.Logger.Error("HandleHealthz/http/Write", "err", err)
+	}
+}
+
+func (handler *MainHandler) HandleNotify(w http.ResponseWriter, r *http.Request) {
+	responseData := util.ResponseData{
+		Writer:  w,
+		Request: r,
+		Logger:  handler.Logger,
+	}
+	var responseMessage util.ResponseMessage
+	var message Notify
+
+	err := json.NewDecoder(r.Body).Decode(&message)
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusBadRequest,
+			Message:  "Could not parse data",
+			Error:    err,
+			CallPath: "HandleUpload/json/Decode",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	baseDir := os.Getenv("DOWNLOAD_DIR")
+
+	safePath := filepath.Join(baseDir, message.File)
+
+	if !strings.HasPrefix(safePath, baseDir) {
+		handler.Logger.Warn("HandleNotify received unclean filename", "filename", message.File)
+		err = util.Error(w, r, http.StatusBadRequest, "Invalid file name")
+		if err != nil {
+			handler.Logger.Error("HandleNotify/util/Error", "err", err)
+		}
+		return
+	}
+
+	switch message.Message {
+	case "remediation complete":
+		// here is where we will call CrossLink
+		handler.Logger.Info("Received remediation complete", "payload", message)
+		err = aws.DownloadArticle(message.File)
+		if err != nil {
+			responseMessage = util.ResponseMessage{
+				Status:   http.StatusInternalServerError,
+				Message:  "Error downloading to AWS",
+				Error:    err,
+				CallPath: "HandleUpload/aws/DownloadArticle",
+			}
+			util.EndpointError(responseData, responseMessage)
+			return
+		}
+	case "download complete":
+		err = os.Remove(safePath) // #nosec G703
+		if err != nil {
+			handler.Logger.Error("HandleNotify/os/Remove", "err", err)
+			err = util.Error(w, r, http.StatusInternalServerError, "Unable to clean up files")
+			if err != nil {
+				handler.Logger.Error("HandleNotify/util/Error", "err", err)
+			}
+			return
+		}
+	default:
+		err = util.Error(w, r, http.StatusBadRequest, "Unknown message")
+		if err != nil {
+			handler.Logger.Error("HandleNotify/util/Error", "err", err)
+		}
+	}
+
+	err = util.Success(w, r, "notified")
+	if err != nil {
+		handler.Logger.Error("HandleNotify/util/Success", "err", err)
+	}
+}
+
+func (handler *MainHandler) HandleUpload(w http.ResponseWriter, r *http.Request) {
+	responseData := util.ResponseData{
+		Writer:  w,
+		Request: r,
+		Logger:  handler.Logger,
+	}
+	var responseMessage util.ResponseMessage
+
+	r.Body = http.MaxBytesReader(w, r.Body, maxUploadFileSize<<20)
+	err := r.ParseMultipartForm(fileSizeThreshold << 20) // #nosec G120
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusBadRequest,
+			Message:  "Could not parse data",
+			Error:    err,
+			CallPath: "HandleUpload/http/ParseMultipartForm",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	file, fileHeader, err := r.FormFile("file")
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusBadRequest,
+			Message:  "Could not parse file",
+			Error:    err,
+			CallPath: "HandleUpload/http/FileForm",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+	defer file.Close() //nolint:errcheck
+
+	transactionId := r.URL.Query().Get("transaction")
+	if transactionId == "" {
+		err = util.Error(w, r, http.StatusBadRequest, "need transaction in url query")
+		if err != nil {
+			handler.Logger.Error("HandleUpload/util/Error", "err", err)
+		}
+		return
+	}
+
+	libraryId := r.Header.Get("X-Library-Id")
+	if libraryId == "" {
+		err = util.Error(w, r, http.StatusBadRequest, "need libraryid in header")
+		if err != nil {
+			handler.Logger.Error("HandleUpload/util/Error", "err", err)
+		}
+		return
+	}
+
+	pdfReader, err := pdf.NewReader(file, fileHeader.Size)
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusInternalServerError,
+			Message:  "Error opening as pdf",
+			Error:    err,
+			CallPath: "HandleUpload/pdf/NewReader",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	pageCount := pdfReader.NumPage()
+
+	err = aws.UploadArticle(file, fileHeader.Filename, &fileHeader.Size)
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusInternalServerError,
+			Message:  "Error uploading to AWS",
+			Error:    err,
+			CallPath: "HandleUpload/aws/UploadArticle",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	err = handler.TrackingModel.InsertTracking(libraryId, transactionId, pageCount, false)
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusInternalServerError,
+			Message:  "Error updating tracking",
+			Error:    err,
+			CallPath: "HandleUpload/data/InsertTracking",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	err = util.Success(w, r, "uploaded")
+	if err != nil {
+		handler.Logger.Error("HandleUpload/util/Success", "err", err)
+	}
+}
+
+func (handler *MainHandler) HandleStatus(w http.ResponseWriter, r *http.Request) {
+	fileName := chi.URLParam(r, "filename")
+	baseDir := os.Getenv("DOWNLOAD_DIR")
+	safePath := filepath.Join(baseDir, fileName)
+	if !strings.HasPrefix(safePath, baseDir) {
+		handler.Logger.Warn("HandleNotify received unclean filename", "filename", fileName)
+		err := util.Error(w, r, http.StatusBadRequest, "Invalid file name")
+		if err != nil {
+			handler.Logger.Error("HandleNotify/util/Error", "err", err)
+		}
+		return
+	}
+
+	response := util.CreateResponse()
+	if _, statErr := os.Stat(safePath); statErr == nil { // #nosec G703
+		response.Add("status", "success")
+		response.Add("message", "file found")
+		response.Add("done", true)
+
+		err := response.WriteResponse(w, r, http.StatusOK)
+		if err != nil {
+			handler.Logger.Error("HandleStatus/util/WriteResponse", "err", err)
+		}
+
+		return
+	} else if errors.Is(statErr, os.ErrNotExist) {
+		response.Add("status", "success")
+		response.Add("message", "file not found")
+		response.Add("done", false)
+
+		err := response.WriteResponse(w, r, http.StatusOK)
+		if err != nil {
+			handler.Logger.Error("HandleStatus/util/WriteResponse", "err", err)
+		}
+
+		return
+	} else {
+		handler.Logger.Error("HandleStatus/os/Stat", "err", statErr)
+		response.Add("status", "error")
+		response.Add("message", "error checking file")
+		response.Add("done", false)
+
+		err := response.WriteResponse(w, r, http.StatusInternalServerError)
+		if err != nil {
+			handler.Logger.Error("HandleStatus/util/WriteResponse", "err", err)
+		}
+	}
+}
+
+func (handler *MainHandler) HandleDownload(w http.ResponseWriter, r *http.Request) {
+	responseData := util.ResponseData{
+		Writer:  w,
+		Request: r,
+		Logger:  handler.Logger,
+	}
+	var responseMessage util.ResponseMessage
+
+	fileName := chi.URLParam(r, "filename")
+
+	err := aws.DownloadArticle(fileName)
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusInternalServerError,
+			Message:  "Error downloading to AWS",
+			Error:    err,
+			CallPath: "HandleUpload/aws/DownloadArticle",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	dirFS := os.DirFS(os.Getenv("DOWNLOAD_DIR"))
+
+	http.ServeFileFS(w, r, dirFS, fileName) // #nosec G703
+}
+
+func (handler *MainHandler) HandleReport(w http.ResponseWriter, r *http.Request) {
+	responseData := util.ResponseData{
+		Writer:  w,
+		Request: r,
+		Logger:  handler.Logger,
+	}
+	var responseMessage util.ResponseMessage
+
+	libraryId := r.Header.Get("X-Library-Id")
+	if libraryId == "" {
+		err := util.Error(w, r, http.StatusBadRequest, "need libraryid in header")
+		if err != nil {
+			handler.Logger.Error("HandleUpload/util/Error", "err", err)
+		}
+		return
+	}
+
+	startTimeStr := r.URL.Query().Get("start")
+	if startTimeStr == "" {
+		err := util.Error(w, r, http.StatusBadRequest, "need start in url query")
+		if err != nil {
+			handler.Logger.Error("HandleReport/util/Error", "err", err)
+		}
+		return
+	}
+
+	endTimeStr := r.URL.Query().Get("end")
+	if endTimeStr == "" {
+		err := util.Error(w, r, http.StatusBadRequest, "need end in url query")
+		if err != nil {
+			handler.Logger.Error("HandleReport/util/Error", "err", err)
+		}
+		return
+	}
+
+	startTime, err := time.Parse(time.DateOnly, startTimeStr)
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusBadRequest,
+			Message:  "need start in YYYY-MM-DD format",
+			Error:    err,
+			CallPath: "HandleReport/time/Parse",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	endTime, err := time.Parse(time.DateOnly, endTimeStr)
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusBadRequest,
+			Message:  "need end in YYYY-MM-DD format",
+			Error:    err,
+			CallPath: "HandleReport/time/Parse",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	info, err := handler.TrackingModel.GetReportFromRange(libraryId, startTime, endTime)
+	if err != nil {
+		responseMessage = util.ResponseMessage{
+			Status:   http.StatusInternalServerError,
+			Message:  "error getting report data",
+			Error:    err,
+			CallPath: "HandleReport/data/GetReportFromRange",
+		}
+		util.EndpointError(responseData, responseMessage)
+		return
+	}
+
+	var result ReportResponse
+	for _, track := range info {
+		result.TotalPages += track.PageCount
+	}
+	result.TotalCost = float64(result.TotalPages) * PricePerPage
+	result.Data = info
+
+	response := util.CreateResponse()
+	response.Add("status", "success")
+	response.Add("result", result)
+
+	err = response.WriteResponse(w, r, http.StatusOK)
+	if err != nil {
+		handler.Logger.Error("HandleReport/util/WriteResponse", "err", err)
+	}
+}
+
+===== FILE: handler/testHandler.go =====
+package handler
+
+import (
+	"log/slog"
+	"net/http"
+	"os"
+	"path/filepath"
+
+	"github.com/idsproject/iris/aws"
+	"github.com/idsproject/iris/util"
+
+	"github.com/idsproject/iris/internal/data"
+
+	"github.com/go-chi/chi/v5"
+)
+
+type TestHandler struct {
+	Logger    *slog.Logger
+	LogsModel *data.LogsModel
+}
+
+func (handler *TestHandler) GetLogger() *slog.Logger {
+	return handler.Logger
+}
+
+func (handler *TestHandler) GetLogsModel() *data.LogsModel {
+	return handler.LogsModel
+}
+
+func CreateTestHandler(logger *slog.Logger, logsModel *data.LogsModel) *TestHandler {
+	return &TestHandler{
+		Logger:    logger,
+		LogsModel: logsModel,
+	}
+}
+
+func (handler *TestHandler) Routes(router chi.Router) {
+	router.Post("/awsupload", handler.HandleTestToAws)
+	router.Get("/awslist", handler.HandleTestList)
+	router.Post("/awsdownload", handler.HandleTestFromAws)
+}
+
+func (handler *TestHandler) HandleTestToAws(w http.ResponseWriter, r *http.Request) {
+	fileName := r.URL.Query().Get("name")
+
+	workingDir, err := os.Getwd()
+	if err != nil {
+		handler.GetLogger().Error("HandleTest/os/Getwd", "err", err)
+		err = util.Error(w, r, http.StatusInternalServerError, "err")
+		if err != nil {
+			handler.GetLogger().Error("HandleTestToAws/util/Error", "err", err)
+		}
+		return
+	}
+
+	filePath := workingDir + "/test_pdfs/" + filepath.Base(fileName)
+
+	file, err := os.Open(filePath) // #nosec G304
+	if err != nil {
+		handler.GetLogger().Error("HandleTestToAws/os/Open", "err", err)
+		err = util.Error(w, r, http.StatusInternalServerError, "err")
+		if err != nil {
+			handler.GetLogger().Error("HandleTestToAws/util/Error", "err", err)
+		}
+		return
+	}
+
+	err = aws.UploadArticle(file, fileName, nil)
+	if err != nil {
+		handler.GetLogger().Error("HandleTest/aws/UploadArticle", "err", err)
+		err = util.Error(w, r, http.StatusInternalServerError, "err")
+		if err != nil {
+			handler.GetLogger().Error("HandleTestToAws/util/Error", "err", err)
+		}
+		return
+	}
+
+	err = util.Success(w, r, "success")
+	if err != nil {
+		handler.GetLogger().Error("HandleTestToAws/util/Success", "err", err)
+	}
+}
+
+func (handler *TestHandler) HandleTestFromAws(w http.ResponseWriter, r *http.Request) {
+	fileName := r.URL.Query().Get("name")
+
+	err := aws.DownloadArticle(fileName)
+	if err != nil {
+		handler.GetLogger().Error("HandleTestFromAws/aws/DownloadArticle", "err", err)
+		err = util.Error(w, r, http.StatusInternalServerError, err)
+		if err != nil {
+			handler.GetLogger().Error("HandleTestFromAws/util/Error", "err", err)
+		}
+		return
+	}
+
+	err = util.Success(w, r, "success")
+	if err != nil {
+		handler.GetLogger().Error("HandleTestFromAws/util/Success", "err", err)
+	}
+}
+
+func (handler *TestHandler) HandleTestList(w http.ResponseWriter, r *http.Request) {
+	objects, err := aws.ListObjects()
+	if err != nil {
+		handler.GetLogger().Error("HandleTestList/aws/ListObjects", "err", err)
+		err = util.Error(w, r, http.StatusInternalServerError, "err")
+		if err != nil {
+			handler.GetLogger().Error("HandleTestList/util/Error", "err", err)
+		}
+		return
+	}
+
+	err = util.Success(w, r, objects)
+	if err != nil {
+		handler.GetLogger().Error("HandleTestList/util/Success", "err", err)
+	}
+}
+
+===== FILE: internal/data/logs.go =====
+package data
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+// LogsModel provides access to the logs table.
+type LogsModel struct {
+	DB *pgxpool.Pool
+}
+
+// Log is a single row of the logs table.
+type Log struct {
+	LibraryID     string
+	TransactionID string
+	Message       string
+	ID            int
+}
+
+// InsertLog records a log message for the given library and function.
+func (model LogsModel) InsertLog(libraryid string, transactionid string, message string) error {
+	query := "insert into logs (libraryid, transactionid, message) values ($1, $2, $3)"
+
+	_, err := model.DB.Exec(context.Background(), query, libraryid, transactionid, message)
+	if err != nil {
+		return fmt.Errorf("unable to insert %s; %s into logs for %s: %w",
+			transactionid, message, libraryid, err)
+	}
+
+	return nil
+}
+
+===== FILE: internal/data/migrations.go =====
+package data
+
+import (
+	"errors"
+	"fmt"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+)
+
+// RunMigrations applies all pending up migrations from migrationDir to the
+// database at connectionStr. It returns the schema version before and after,
+// whether the schema is left in a dirty state, and any error. A missing initial
+// version or an already up-to-date schema is not treated as an error.
+func RunMigrations(migrationDir, connectionStr string) (uint, uint, bool, error) {
+	var from, to uint
+	var dirty bool
+
+	migration, err := migrate.New(migrationDir, connectionStr)
+	if err != nil {
+		return from, to, dirty, fmt.Errorf("failed to create migration: %w", err)
+	}
+
+	from, dirty, err = migration.Version()
+	if err != nil && !errors.Is(err, migrate.ErrNilVersion) {
+		return from, to, dirty, fmt.Errorf("failed to get from version: %w", err)
+	}
+
+	err = migration.Up()
+	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		return from, to, dirty, fmt.Errorf("failed to run migrations: %w", err)
+	}
+
+	to, dirty, err = migration.Version()
+	if err != nil && !errors.Is(err, migrate.ErrNilVersion) {
+		return from, to, dirty, fmt.Errorf("failed to get to version: %w", err)
+	}
+
+	return from, to, dirty, nil
+}
+
+===== FILE: internal/data/models.go =====
+// Package data is the PostgreSQL data-access layer for the iris API.
+//
+// Each database table is served by a model type holding a pgx connection pool
+// and exposing the queries the application needs. [Models] aggregates all of
+// those models behind a single value constructed with [NewModels].
+package data
+
+import (
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+// Models aggregates every data-access model, giving handlers a single value
+// through which to reach the database.
+type Models struct {
+	Logs     LogsModel
+	Tracking TrackingModel
+}
+
+// NewModels returns a [Models] whose every model shares the given connection
+// pool.
+func NewModels(db *pgxpool.Pool) Models {
+	return Models{
+		Logs:     LogsModel{DB: db},
+		Tracking: TrackingModel{DB: db},
+	}
+}
+
+===== FILE: internal/data/tracking.go =====
+package data
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type TrackingModel struct {
+	DB *pgxpool.Pool
+}
+
+type Tracking struct {
+	Processed     time.Time `json:"processed"`
+	LibraryID     string    `json:"library_id"`
+	TransactionID string    `json:"transaction_id"`
+	PageCount     int       `json:"page_count"`
+	Paid          bool      `json:"paid"`
+	ID            int       `json:"-"`
+}
+
+func (model TrackingModel) InsertTracking(libraryid string, transactionid string, pageCount int, paid bool) error {
+	query := "insert into tracking (libraryid, transactionid, pagecount, paid, processed) values ($1, $2, $3, $4, $5)"
+
+	_, err := model.DB.Exec(context.Background(), query, libraryid, transactionid, pageCount, false, time.Now())
+	if err != nil {
+		return fmt.Errorf("unable to insert %s; into tracking for %s: %w",
+			transactionid, libraryid, err)
+	}
+
+	return nil
+}
+
+func (model TrackingModel) GetReportFromRange(libraryid string, start time.Time, end time.Time) ([]Tracking, error) {
+	query := `
+    select * from tracking
+    where libraryid = $1
+    and processed >= $2
+    and processed <= $3`
+
+	rows, err := model.DB.Query(context.Background(), query, libraryid, start, end)
+	if err != nil {
+		return nil, fmt.Errorf("unable to query tracking: %w", err)
+	}
+	defer rows.Close()
+
+	return pgx.CollectRows(rows, pgx.RowToStructByName[Tracking])
+}
+
+===== FILE: migrations/000001_create_logs.down.sql =====
+DROP TABLE IF EXISTS logs;
+
+===== FILE: migrations/000001_create_logs.up.sql =====
+CREATE TABLE IF NOT EXISTS logs (
+    id SERIAL PRIMARY KEY,
+    libraryid TEXT,
+    transactionid TEXT,
+    message TEXT
+)
+
+===== FILE: migrations/000002_create_tracking.down.sql =====
+DROP TABLE IF EXISTS tracking;
+
+===== FILE: migrations/000002_create_tracking.up.sql =====
+CREATE TABLE IF NOT EXISTS tracking (
+    id SERIAL PRIMARY KEY,
+    libraryid text,
+    transactionid text,
+    pagecount int,
+    paid boolean,
+    processed timestamp
+);
+
+===== FILE: util/response.go =====
+package util
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"log/slog"
+	"net/http"
+	"strings"
+)
+
+type Response struct {
+	Content map[string]any
+}
+
+type ResponseData struct {
+	Writer  http.ResponseWriter
+	Request *http.Request
+	Logger  *slog.Logger
+}
+type ResponseMessage struct {
+	Error    error
+	Message  string
+	CallPath string
+	Status   int
+}
+
+func CreateResponse() *Response {
+	var resp Response
+	resp.Content = make(map[string]any)
+	return &resp
+}
+
+func (resp *Response) Add(key string, value any) {
+	resp.Content[key] = value
+}
+
+func (resp *Response) Get(key string) any {
+	return resp.Content[key]
+}
+
+func (resp *Response) Clear() {
+	clear(resp.Content)
+}
+
+func (resp *Response) WriteResponse(w http.ResponseWriter, r *http.Request, status int) error {
+	result, err := json.Marshal(resp.Content)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, writeErr := w.Write([]byte(`{"status":"error","message":"Couldn't marshal response"}`))
+		if writeErr != nil {
+			return errors.Join(err, writeErr)
+		}
+		return err
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-store")
+	w.WriteHeader(status)
+
+	_, err = w.Write(result)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Error(w http.ResponseWriter, r *http.Request, status int, message any, args ...any) error {
+	resp := CreateResponse()
+	resp.Add("status", "error")
+	if str, ok := message.(string); ok && len(args) > 0 {
+		resp.Add("message", fmt.Sprintf(str, args...))
+	} else {
+		resp.Add("message", message)
+	}
+	err := resp.WriteResponse(w, r, status)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func Success(w http.ResponseWriter, r *http.Request, message any, args ...any) error {
+	resp := CreateResponse()
+	resp.Add("status", "success")
+	if str, ok := message.(string); ok && len(args) > 0 {
+		resp.Add("message", fmt.Sprintf(str, args...))
+	} else {
+		resp.Add("message", message)
+	}
+	err := resp.WriteResponse(w, r, http.StatusOK)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func EndpointError(data ResponseData, message ResponseMessage) {
+	baseFunc, _, _ := strings.Cut(message.CallPath, "/")
+	data.Logger.Error(message.CallPath, "err", message.Error)
+	err := Error(data.Writer, data.Request, message.Status, message.Message)
+	if err != nil {
+		data.Logger.Error(baseFunc+"/util/Error", "err", err)
+	}
+}
+
