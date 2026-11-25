@@ -258,6 +258,41 @@ Network wording) and point the project link at an IDS Network page set by
 `PROJECT_SITE_URL`. A failure to load optional content must never turn a page
 into a 500 error.
 
+## 4g. System and health pages
+
+Keep health checks and a minimal administrator settings page. Drop the rest of
+the System section (SysController), which exposes server internals.
+
+**Keep, translated as-is**
+
+- HealthController and its routes: `/health/*` (including
+  `/health/check/:subsystem` and `/health/run_state`), `/version`,
+  `/healthcheck`, `/system_unavailable`. Subsystem checks that refer to
+  services EMMA no longer uses (UVA search/ingest hosts) check emma-index
+  instead.
+- `/healthz` (section 4b) stays separate: a plain 200 for the container health
+  check, with no database or service calls.
+
+**Keep, reduced**
+
+- `GET /sys`: a short menu linking only to the pages kept below.
+- `GET /sys/settings` and `POST|PUT|PATCH /sys` (`SysController#update`):
+  view and change the AppSettings flags. Show AppSettings values only. Do not
+  display environment variables, credentials, secrets or file paths, and drop
+  the Rails text that refers to Terraform, `.idea/environment.rb` or Docker
+  mounts.
+- `GET /sys/jobs`: link to the River job dashboard (riverui) if it is
+  deployed, otherwise omit.
+- Administrator role only, using the existing ability rules for `SysController`.
+
+**Drop** (no Go code, no routes): `/sys/analytics`, `/sys/database`,
+`/sys/disk_space`, `/sys/environment`, `/sys/files`, `/sys/headers`,
+`/sys/internals`, `/sys/loggers`, `/sys/mailers`, `/sys/processes`,
+`/sys/var`, `/sys/view`, and their helpers in app/helpers/sys_helper/ other
+than what settings needs. Remove their links from the menu and the nav bar.
+Their Rails tests (SysControllerTest, SysTest) are excluded from parity
+checks, except the settings and index tests.
+
 ## 5. Go project conventions
 
 Follow the structure, naming, error handling and logging style of
@@ -328,7 +363,7 @@ validation before the next one starts.
    ActionCable channels.
 7. **Downloads and partners**: download model, partner packages (section 4c),
    download_controller, emma-ia worker (section 4e).
-8. **Remaining tools**: tool_controller, data_controller, sys_controller,
+8. **Remaining tools**: tool_controller, data_controller, sys_controller (reduced per section 4g),
    about/help/home.
 
 ## 8. Validation
