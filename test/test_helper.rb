@@ -89,7 +89,7 @@ public
 #
 # @type [Boolean]
 #
-PARALLEL_TESTS = true
+PARALLEL_TESTS = false
 
 # The output format(s) to test.
 #
