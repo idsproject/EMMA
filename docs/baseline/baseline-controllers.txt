@@ -1,0 +1,216 @@
+
+DATE 2026-11-25
+Run options: -v --exclude /SysControllerTest/ --seed 52649
+
+# Running:
+
+HomeControllerTest#test_home_main_-_as_anonymous = 0.36 s = .
+HomeControllerTest#test_home_controller_test_coverage = 0.01 s = .
+HomeControllerTest#test_home_main_-_as_test_dso_1 = 0.06 s = .
+HomeControllerTest#test_home_welcome = 0.26 s = .
+HomeControllerTest#test_home_dashboard = 1.31 s = .
+HelpControllerTest#test_help_controller_test_coverage = 0.00 s = .
+HelpControllerTest#test_help_show_-_search = 0.05 s = .
+HelpControllerTest#test_help_index = 0.08 s = .
+SearchCallControllerTest#test_search_call_controller_test_coverage = 0.00 s = .
+SearchCallControllerTest#test_search_call_index_-_sample_search = 0.55 s = .
+SearchCallControllerTest#test_search_call_show_-_details_search_call_item = 0.39 s = .
+SearchCallControllerTest#test_search_call_index_-_no_search = 0.32 s = .
+ToolControllerTest#test_tool_controller_test_coverage = 0.00 s = .
+ToolControllerTest#test_tool_lookup_-_bibliographic_lookup = 0.55 s = .
+ToolControllerTest#test_tool_md_-_Math_Detective = 0.61 s = .
+ToolControllerTest#test_tool_index = 0.52 s = .
+HealthControllerTest#test_health_controller_test_coverage = 0.00 s = .
+HealthControllerTest#test_health_version = TEST SKIPPED - NOT APPLICABLE for :json format
+Test is missing assertions: `test_health_version` /home/sullivm/code/emma/test/controllers/health_controller_test.rb:33
+0.01 s = .
+HealthControllerTest#test_health_run_state = 0.45 s = .
+HealthControllerTest#test_health_check_-_all_subsystem_statuses = TEST SKIPPED - NOT APPLICABLE for :json format
+Test is missing assertions: `test_health_check_-_all_subsystem_statuses` /home/sullivm/code/emma/test/controllers/health_controller_test.rb:43
+0.01 s = .
+HealthControllerTest#test_version = TEST SKIPPED - NOT APPLICABLE for :json format
+Test is missing assertions: `test_version` /home/sullivm/code/emma/test/controllers/health_controller_test.rb:28
+0.01 s = .
+HealthControllerTest#test_healthcheck = TEST SKIPPED - NOT APPLICABLE for :json format
+Test is missing assertions: `test_healthcheck` /home/sullivm/code/emma/test/controllers/health_controller_test.rb:38
+0.01 s = .
+HealthControllerTest#test_health_check_-_storage_subsystem_status = TEST SKIPPED - NOT APPLICABLE for :json format
+Test is missing assertions: `test_health_check_-_storage_subsystem_status` /home/sullivm/code/emma/test/controllers/health_controller_test.rb:48
+0.01 s = .
+OrgControllerTest#test_org_delete_-_select_an_existing_org_for_removal = 0.50 s = .
+OrgControllerTest#test_org_show_-_details_of_an_existing_org = 0.57 s = .
+OrgControllerTest#test_org_index_-_list_orgs = 0.46 s = .
+OrgControllerTest#test_org_create_-_a_new_org = 0.44 s = .
+OrgControllerTest#test_org_edit_-_data_for_an_existing_org = 0.50 s = .
+OrgControllerTest#test_org_new_-_import_data_for_a_new_org = 0.41 s = .
+OrgControllerTest#test_org_list_all_-_list_all_orgs = 0.43 s = .
+OrgControllerTest#test_org_destroy_-_remove_an_existing_org = 0.42 s = .
+OrgControllerTest#test_org_controller_test_coverage = 0.01 s = .
+OrgControllerTest#test_org_update_-_replace_an_existing_org = 0.40 s = .
+OrgControllerTest#test_org_show_current_-_details_of_the_current_org = 0.98 s = .
+MetricsControllerTest#test_metrics_controller_test_coverage = 0.01 s = .
+MetricsControllerTest#test_metrics_test = 0.02 s = .
+DataControllerTest#test_data_index = 0.43 s = .
+DataControllerTest#test_data_controller_test_coverage = 0.00 s = .
+DataControllerTest#test_data_show_-_orgs_table = 0.41 s = .
+DataControllerTest#test_data_submissions = 0.41 s = .
+DataControllerTest#test_data_counts_-_distinct_values_per_submission_field = 0.39 s = .
+AboutControllerTest#test_about_index = 0.22 s = F
+
+
+Failure:
+AboutControllerTest#test_about_index [test/test_helper/integration_tests/authentication.rb:196]:
+Expected response to be a <2XX: success>, but was a <500: Internal Server Error>
+
+bin/rails test test/controllers/about_controller_test.rb:28
+
+AboutControllerTest#test_about_controller_test_coverage = 0.00 s = .
+AboutControllerTest#test_about_members = 0.41 s = .
+AboutControllerTest#test_about_submissions = 0.40 s = .
+AboutControllerTest#test_about_downloads = 0.40 s = .
+AccountControllerTest#test_account_delete_-_select_an_existing_user_account_for_removal = 0.46 s = .
+AccountControllerTest#test_account_show_-_details_of_an_existing_user_account = 0.55 s = .
+AccountControllerTest#test_account_edit_current_-_user_account_form = 0.41 s = .
+AccountControllerTest#test_account_create_-_a_new_user_account = 0.41 s = .
+AccountControllerTest#test_account_edit_-_user_account_edit_form = 0.53 s = .
+AccountControllerTest#test_account_new_-_user_account_form = 0.41 s = .
+AccountControllerTest#test_account_index_-_list_user_accounts = 0.68 s = .
+AccountControllerTest#test_account_destroy_-_remove_an_existing_user_account = 0.38 s = .
+AccountControllerTest#test_account_controller_test_coverage = 0.00 s = .
+AccountControllerTest#test_account_update_-_modify_an_existing_user_account = 0.40 s = .
+AccountControllerTest#test_account_show_current_-_details_of_the_current_user_account = 0.64 s = .
+ManifestItemControllerTest#test_manifest_item_controller_test_coverage = 0.03 s = .
+ManifestItemControllerTest#test_manifest_item_show_-_details_of_an_existing_manifest_item = 0.56 s = .
+ManifestItemControllerTest#test_manifest_item_index_-_list_manifest_items = 1.05 s = .
+UploadControllerTest#test_upload_create_-_a_new_upload = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b071b93l87\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b071b93l87\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2\",\"dc_creator\":[\"Edgar Allan Poe\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | DATA: (none)
+>>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b071b93t88\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b071b93t88\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2\",\"dc_creator\":[\"Edgar Allan Poe\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | DATA: (none)
+>>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b071b93z89\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b071b93z89\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2\",\"dc_creator\":[\"Edgar Allan Poe\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | DATA: (none)
+0.74 s = .
+UploadControllerTest#test_upload_show_-_details_of_an_existing_upload = 0.67 s = .
+UploadControllerTest#test_upload_edit_-_data_for_an_existing_upload = 0.68 s = .
+UploadControllerTest#test_upload_controller_test_coverage = 0.01 s = .
+UploadControllerTest#test_upload_destroy_-_remove_an_existing_upload = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b071b95l95\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b071b95l95\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2\",\"dc_creator\":[\"Edgar Allan Poe\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+0.03 s = E
+
+
+Error:
+UploadControllerTest#test_upload_destroy_-_remove_an_existing_upload:
+IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)
+    app/services/concerns/api_service/common.rb:476:in 'ApiService::Common#transmit'
+    app/services/ingest_service/common.rb:76:in 'IngestService::Common#transmit'
+    app/services/concerns/api_service/common.rb:175:in 'ApiService::Common#api'
+    app/services/ingest_service/action/submissions.rb:184:in 'IngestService::Action::Submissions#api_send'
+    app/services/ingest_service/action/submissions.rb:61:in 'IngestService::Action::Submissions#put_records'
+    app/controllers/concerns/upload_concern.rb:587:in 'UploadConcern#reindex_record'
+    app/controllers/concerns/upload_concern.rb:545:in 'block in UploadConcern#reindex_submissions'
+    app/controllers/concerns/upload_concern.rb:544:in 'Enumerable#each_slice'
+    app/controllers/concerns/upload_concern.rb:544:in 'UploadConcern#reindex_submissions'
+    test/test_helper/utility.rb:819:in 'TestHelper::Utility#reindex'
+    test/controllers/upload_controller_test.rb:203:in 'block (3 levels) in <class:UploadControllerTest>'
+    test/test_helper/integration_tests/authentication.rb:110:in 'Array#each'
+    test/test_helper/integration_tests/authentication.rb:110:in 'block in TestHelper::IntegrationTests::Authentication#foreach_format'
+    test/test_helper/integration_tests/authentication.rb:68:in 'TestHelper::IntegrationTests::Authentication#as_user'
+    test/test_helper/integration_tests/authentication.rb:109:in 'TestHelper::IntegrationTests::Authentication#foreach_format'
+    test/controllers/upload_controller_test.rb:202:in 'block (2 levels) in <class:UploadControllerTest>'
+    test/controllers/upload_controller_test.rb:197:in 'Array#each'
+    test/controllers/upload_controller_test.rb:197:in 'block in <class:UploadControllerTest>'
+
+bin/rails test test/controllers/upload_controller_test.rb:192
+
+UploadControllerTest#test_upload_new_-_data_for_a_new_upload = 0.49 s = .
+UploadControllerTest#test_upload_index_-_list_uploads = 0.68 s = .
+UploadControllerTest#test_upload_delete_-_select_an_existing_upload_for_removal = 0.46 s = .
+UploadControllerTest#test_upload_admin_-_view_S3_buckets = 1.25 s = F
+
+
+Failure:
+UploadControllerTest#test_upload_admin_-_view_S3_buckets [test/test_helper/integration_tests/authentication.rb:196]:
+Expected response to be a <2XX: success>, but was a <500: Internal Server Error>
+
+bin/rails test test/controllers/upload_controller_test.rb:218
+
+UploadControllerTest#test_upload_update_-_replace_an_existing_upload = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b071b98j02\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b071b98j02\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2\",\"dc_creator\":[\"Edgar Allan Poe\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | DATA: (none)
+>>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b071b98k03\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b071b98k03\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2\",\"dc_creator\":[\"Edgar Allan Poe\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | DATA: (none)
+>>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b071b98v04\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b071b98v04\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2\",\"dc_creator\":[\"Edgar Allan Poe\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+0.59 s = .
+SearchControllerTest#test_search_controller_test_coverage = 0.00 s = .
+SearchControllerTest#test_search_index_-_no_search = 0.22 s = .
+SearchControllerTest#test_search_index_-_sample_search = >>> search | "search" | options = {"title" => "Mansfield Park"} | headers = {} | BODY:
+>>>
+0.24 s = F
+
+
+Failure:
+SearchControllerTest#test_search_index_-_sample_search [test/test_helper/integration_tests/authentication.rb:196]:
+Expected response to be a <2XX: success>, but was a <400: Bad Request>
+
+bin/rails test test/controllers/search_controller_test.rb:43
+
+SearchControllerTest#test_search_direct_-_sample_search = >>> search | "search" | options = {"title" => "Mansfield Park"} | headers = {} | BODY:
+>>>
+0.07 s = F
+
+
+Failure:
+SearchControllerTest#test_search_direct_-_sample_search [test/test_helper/integration_tests/authentication.rb:196]:
+Expected response to be a <2XX: success>, but was a <500: Internal Server Error>
+
+bin/rails test test/controllers/search_controller_test.rb:61
+
+DownloadsControllerTest#test_download_delete_-_select_an_existing_download_event_for_removal = 0.43 s = .
+DownloadsControllerTest#test_download_update_-_replace_an_existing_download_event = 0.37 s = .
+DownloadsControllerTest#test_download_index_-_list_download_events = 0.40 s = .
+DownloadsControllerTest#test_download_create_-_a_new_download_event = 0.36 s = .
+DownloadsControllerTest#test_download_edit_-_data_for_an_existing_download_event = 0.38 s = .
+DownloadsControllerTest#test_download_show_-_details_of_an_existing_download_event = 0.37 s = .
+DownloadsControllerTest#test_download_new_-_make_a_download_event = 0.35 s = .
+DownloadsControllerTest#test_download_destroy_-_remove_an_existing_download_event = 0.35 s = .
+DownloadsControllerTest#test_download_controller_test_coverage = 0.00 s = .
+ManifestControllerTest#test_manifest_delete_-_select_an_existing_manifest_for_removal = 0.46 s = .
+ManifestControllerTest#test_manifest_update_-_replace_an_existing_manifest = 0.40 s = .
+ManifestControllerTest#test_manifest_index_-_list_manifests = 0.52 s = .
+ManifestControllerTest#test_manifest_create_-_a_new_manifest = 0.39 s = .
+ManifestControllerTest#test_manifest_edit_-_data_for_an_existing_manifest = 0.74 s = .
+ManifestControllerTest#test_manifest_show_-_details_of_an_existing_manifest = 0.41 s = .
+ManifestControllerTest#test_manifest_new_-_import_data_for_a_new_manifest = 0.67 s = .
+ManifestControllerTest#test_manifest_destroy_-_remove_an_existing_manifest = 0.37 s = .
+ManifestControllerTest#test_manifest_controller_test_coverage = 0.00 s = .
+EnrollmentControllerTest#test_enrollment_delete_-_select_an_existing_enrollment_request_for_removal = 0.41 s = .
+EnrollmentControllerTest#test_enrollment_update_-_replace_an_existing_enrollment_request = 0.46 s = .
+EnrollmentControllerTest#test_enrollment_index_-_list_enrollment_requests = 0.60 s = .
+EnrollmentControllerTest#test_enrollment_create_-_a_new_enrollment_request = 0.42 s = .
+EnrollmentControllerTest#test_enrollment_edit_-_data_for_an_existing_enrollment_request = 0.47 s = .
+EnrollmentControllerTest#test_enrollment_show_-_details_of_an_existing_enrollment_request = 0.42 s = .
+EnrollmentControllerTest#test_enrollment_new_-_import_data_for_a_new_enrollment_request = 0.41 s = .
+EnrollmentControllerTest#test_enrollment_destroy_-_remove_an_existing_enrollment_request = 0.36 s = .
+EnrollmentControllerTest#test_enrollment_controller_test_coverage = 0.00 s = .
+UserSessionsControllerTest#test_user/sessions_create_-_signing-in = 0.08 s = .
+UserSessionsControllerTest#test_user/sessions_new_-_sign-in_page = 0.02 s = .
+UserSessionsControllerTest#test_user/sessions_destroy_-_sign-out_as_anonymous = 0.01 s = .
+UserSessionsControllerTest#test_user/sessions_controller_test_coverage = 0.00 s = .
+UserSessionsControllerTest#test_user/sessions_sign_in_as_-_sign_in_and_out_test_dso_1 = 0.12 s = .
+UserSessionsControllerTest#test_user/sessions_create_-_double_sign-in = 0.33 s = .
+
+Finished in 37.564500s, 2.8484 runs/s, 28.7505 assertions/s.
+107 runs, 1080 assertions, 4 failures, 1 errors, 0 skips

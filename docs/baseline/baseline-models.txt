@@ -1,0 +1,80 @@
+
+DATE 2026-11-25
+Run options: -v --seed 48646
+
+# Running:
+
+OrgDecoratorTest#test_org_decorator_-_js_properties = 0.18 s = .
+EnrollmentTest#test_model_-_valid_enrollment = 0.02 s = .
+EnrollmentTest#test_model_-_add_users_to_enrollment = Test is missing assertions: `test_model_-_add_users_to_enrollment` /home/sullivm/code/emma/test/models/enrollment_test.rb:18
+0.00 s = .
+SearchCallTest#test_model_-_valid_search_call = 0.01 s = .
+SearchTitleDecoratorTest#test_search_title_decorator_-_js_properties = 0.00 s = .
+UserTest#test_model_-_user_must_have_a_valid_email_address = 0.06 s = .
+UserTest#test_model_-_user_must_have_an_email_address = 0.01 s = .
+UserTest#test_model_-_valid_user = 0.00 s = .
+ManifestItemDecoratorTest#test_manifest_item_decorator_-_js_properties = 0.01 s = .
+SearchDecoratorTest#test_search_decorator_-_js_properties = 0.00 s = .
+DownloadTest#test_download_-_valid_download_event = 0.01 s = .
+JobResultTest#test_model_-_valid_job_result = 0.01 s = .
+AccountDecoratorTest#test_account_decorator_-_js_properties = 0.01 s = .
+SearchResultTest#test_model_-_valid_search_result = 0.01 s = .
+ManifestItemTest#test_model_-_valid_manifest_item = 0.02 s = .
+UploadDecoratorTest#test_upload_decorator_-_js_properties = 0.01 s = .
+ManifestDecoratorTest#test_manifest_decorator_-_js_properties = 0.01 s = .
+SearchCallDecoratorTest#test_search_call_decorator_-_js_properties = 0.00 s = .
+SearchRecordDecoratorTest#test_search_record_decorator_-_js_properties = 0.00 s = .
+UploadTest#test_model_-_valid_Upload_record = 0.01 s = .
+ManifestTest#test_model_-_valid_manifest = 0.01 s = .
+ManifestTest#test_model_-_add_items_to_manifest = 0.01 s = .
+OrgTest#test_model_-_valid_org = 0.00 s = .
+OrgTest#test_model_-_add_users_to_org = 0.06 s = .
+EnrollmentDecoratorTest#test_enrollment_decorator_-_js_properties = 0.01 s = .
+UserDecoratorTest#test_user_decorator_-_js_properties = 0.00 s = .
+AccountMailerTest#test_account_mailer_test_coverage = 0.00 s = .
+AccountMailerTest#test_mailer_account_-_new_user_email = 0.17 s = .
+AccountMailerTest#test_mailer_account_-_new_man_email = 0.19 s = E
+
+
+Error:
+AccountMailerTest#test_mailer_account_-_new_man_email:
+Faraday::SSLError: SSL_connect returned=1 errno=0 peeraddr=104.236.12.153:443 state=error: certificate verify failed (hostname mismatch)
+    app/mailers/application_mailer.rb:83:in 'ApplicationMailer#fetch_remote_message'
+    app/mailers/application_mailer.rb:67:in 'ApplicationMailer#fetch_message'
+    app/mailers/application_mailer.rb:346:in 'ApplicationMailer#email_elements'
+    app/mailers/account_mailer.rb:91:in 'AccountMailer#new_welcome_email'
+    app/mailers/account_mailer.rb:59:in 'AccountMailer#new_man_email'
+    app/jobs/mailer_job.rb:52:in 'MailerJob#perform'
+    app/jobs/application_job/logging.rb:62:in 'ApplicationJob::Logging#perform_now'
+    test/application_mailer_test_case.rb:29:in 'block in ApplicationMailerTestCase#validate_email'
+    test/application_mailer_test_case.rb:29:in 'ApplicationMailerTestCase#validate_email'
+    test/mailers/account_mailer_test.rb:29:in 'block in <class:AccountMailerTest>'
+
+bin/rails test test/mailers/account_mailer_test.rb:28
+
+AccountMailerTest#test_mailer_account_-_new_org_email = 0.13 s = E
+
+
+Error:
+AccountMailerTest#test_mailer_account_-_new_org_email:
+Faraday::SSLError: SSL_connect returned=1 errno=0 peeraddr=104.236.12.153:443 state=error: certificate verify failed (hostname mismatch)
+    app/mailers/application_mailer.rb:83:in 'ApplicationMailer#fetch_remote_message'
+    app/mailers/application_mailer.rb:67:in 'ApplicationMailer#fetch_message'
+    app/mailers/application_mailer.rb:346:in 'ApplicationMailer#email_elements'
+    app/mailers/account_mailer.rb:91:in 'AccountMailer#new_welcome_email'
+    app/mailers/account_mailer.rb:69:in 'AccountMailer#new_org_email'
+    app/jobs/mailer_job.rb:52:in 'MailerJob#perform'
+    app/jobs/application_job/logging.rb:62:in 'ApplicationJob::Logging#perform_now'
+    test/application_mailer_test_case.rb:29:in 'block in ApplicationMailerTestCase#validate_email'
+    test/application_mailer_test_case.rb:29:in 'ApplicationMailerTestCase#validate_email'
+    test/mailers/account_mailer_test.rb:35:in 'block in <class:AccountMailerTest>'
+
+bin/rails test test/mailers/account_mailer_test.rb:34
+
+DownloadDecoratorTest#test_download_decorator_-_js_properties = 0.02 s = .
+EnrollmentMailerTest#test_mailer_enrollment_-_request_email = 0.11 s = .
+EnrollmentMailerTest#test_enrollment_mailer_test_coverage = 0.01 s = .
+DeviseMailerTest#test_mailer_devise_-_reset_password_instructions = 0.04 s = .
+
+Finished in 1.163152s, 29.2309 runs/s, 61.9008 assertions/s.
+34 runs, 72 assertions, 0 failures, 2 errors, 0 skips
