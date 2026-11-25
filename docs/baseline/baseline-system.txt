@@ -1,0 +1,861 @@
+
+up to date, audited 40 packages in 635ms
+
+10 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> emma@0.0.0 build
+> bin/asset_build esbuild
+
++ esbuild app/assets/javascripts/application.js --outdir=app/assets/builds --bundle --color=true --target=chrome125,edge125,firefox126,opera110,safari16 --minify
+
+  [37mapp/assets/builds/[0m[1mapplication.js[0m  [36m699.9kb[0m
+
+⚡ [32mDone in 56ms[0m
+
+up to date, audited 40 packages in 411ms
+
+10 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> emma@0.0.0 build:css
+> bin/asset_build sass
+
++ sass app/assets/stylesheets/application.sass.scss app/assets/builds/application.css -I node_modules -I app/assets/stylesheets --color --no-source-map --style=compressed
+[33m[1mDeprecation Warning[0m [[34mif-function[0m]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass((math.abs($result) < 1%)): ($result * 100); else: $result)
+
+More info: https://sass-lang.com/d/if-function
+
+[34m   ╷[0m
+[34m22 │[0m     @return [31mif((math.abs($result) < 1%), ($result * 100), $result)[0m;
+[34m   │[0m [31m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[34m   ╵[0m
+    app/assets/stylesheets/shared/_functions.scss 22:13  @use
+    app/assets/stylesheets/shared/_variables.scss 5:1    @use
+    app/assets/stylesheets/layouts/_root.scss 3:1        @use
+    app/assets/stylesheets/layouts/index.scss 3:1        @use
+    app/assets/stylesheets/application.sass.scss 5:1     root stylesheet
+
+[33m[1mDeprecation Warning[0m [[34mif-function[0m]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($force): "!important"; else: "")
+
+More info: https://sass-lang.com/d/if-function
+
+[34m    ╷[0m
+[34m143 │[0m     $important: [31mif($force, "!important", "")[0m;
+[34m    │[0m [31m                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[34m    ╵[0m
+    app/assets/stylesheets/shared/_mixins.scss 143:17  @use
+    app/assets/stylesheets/layouts/_common.scss 6:1    @use
+    app/assets/stylesheets/layouts/index.scss 4:1      @use
+    app/assets/stylesheets/application.sass.scss 5:1   root stylesheet
+
+[33m[1mDeprecation Warning[0m [[34mif-function[0m]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($force): "!important"; else: "")
+
+More info: https://sass-lang.com/d/if-function
+
+[34m    ╷[0m
+[34m155 │[0m     $important: [31mif($force, "!important", "")[0m;
+[34m    │[0m [31m                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[34m    ╵[0m
+    app/assets/stylesheets/shared/_mixins.scss 155:17  @use
+    app/assets/stylesheets/layouts/_common.scss 6:1    @use
+    app/assets/stylesheets/layouts/index.scss 4:1      @use
+    app/assets/stylesheets/application.sass.scss 5:1   root stylesheet
+
+[33m[1mDeprecation Warning[0m [[34mif-function[0m]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($force): "!important"; else: "")
+
+More info: https://sass-lang.com/d/if-function
+
+[34m    ╷[0m
+[34m174 │[0m     $important: [31mif($force, "!important", "")[0m;
+[34m    │[0m [31m                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[34m    ╵[0m
+    app/assets/stylesheets/shared/_mixins.scss 174:17  @use
+    app/assets/stylesheets/layouts/_common.scss 6:1    @use
+    app/assets/stylesheets/layouts/index.scss 4:1      @use
+    app/assets/stylesheets/application.sass.scss 5:1   root stylesheet
+
+[33m[1mDeprecation Warning[0m [[34mif-function[0m]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($force): "!important"; else: "")
+
+More info: https://sass-lang.com/d/if-function
+
+[34m    ╷[0m
+[34m196 │[0m     $important: [31mif($force, "!important", "")[0m;
+[34m    │[0m [31m                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[34m    ╵[0m
+    app/assets/stylesheets/shared/_mixins.scss 196:17  @use
+    app/assets/stylesheets/layouts/_common.scss 6:1    @use
+    app/assets/stylesheets/layouts/index.scss 4:1      @use
+    app/assets/stylesheets/application.sass.scss 5:1   root stylesheet
+
+[33m[1mWarning[0m: 7 repetitive deprecation warnings omitted.
+Run in verbose mode to see all warnings.
+
+
+DATE 2026-11-25
+Run options: -v --exclude /SysTest/ --seed 29003
+
+# Running:
+
+HomeTest#test_home_-_dashboard_-_anonymous = Capybara starting Puma...
+* Version 6.6.1, codename: Return to Forever
+* Min threads: 0, max threads: 1
+* Listening on http://127.0.0.1:34983
+2.20 s = .
+HomeTest#test_home_-_main_-_anonymous = 0.51 s = .
+HomeTest#test_home_system_test_coverage = 0.06 s = .
+HomeTest#test_home_-_welcome_-_anonymous = 0.45 s = .
+HealthTest#test_health_-_check_-_visit_health_check = 0.42 s = .
+HealthTest#test_health_-_version_-_visit_version = 0.47 s = .
+HealthTest#test_health_system_test_coverage = 0.09 s = .
+UploadsTest#test_uploads_-_show_-_member = 1.55 s = .
+UploadsTest#test_uploads_-_edit_-_admin = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b0722fan66\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2 - AE0D2499 - ADMINISTRATOR\",\"dc_creator\":[\"Edgar Allan Poe - A61DC2DA - ADMINISTRATOR\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b0722fan66\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_edit_-_admin.png
+6.11 s = F
+
+
+Failure:
+UploadsTest#test_uploads_-_edit_-_admin [test/system/uploads_test.rb:628]:
+expected to find css ".flash-messages *" but there were no matches
+
+bin/rails test test/system/uploads_test.rb:158
+
+UploadsTest#test_uploads_-_list_own_-_admin = 2.79 s = .
+UploadsTest#test_uploads_-_delete_-_member = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b072303w81\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b072303w81\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2 - 6FA3B840 - STANDARD\",\"dc_creator\":[\"Edgar Allan Poe - E49E11FD - STANDARD\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_delete_-_member.png
+0.43 s = E
+
+
+Error:
+UploadsTest#test_uploads_-_delete_-_member:
+IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)
+    app/services/concerns/api_service/common.rb:476:in 'ApiService::Common#transmit'
+    app/services/ingest_service/common.rb:76:in 'IngestService::Common#transmit'
+    app/services/concerns/api_service/common.rb:175:in 'ApiService::Common#api'
+    app/services/ingest_service/action/submissions.rb:184:in 'IngestService::Action::Submissions#api_send'
+    app/services/ingest_service/action/submissions.rb:61:in 'IngestService::Action::Submissions#put_records'
+    app/controllers/concerns/upload_concern.rb:587:in 'UploadConcern#reindex_record'
+    app/controllers/concerns/upload_concern.rb:545:in 'block in UploadConcern#reindex_submissions'
+    app/controllers/concerns/upload_concern.rb:544:in 'Enumerable#each_slice'
+    app/controllers/concerns/upload_concern.rb:544:in 'UploadConcern#reindex_submissions'
+    test/test_helper/utility.rb:819:in 'TestHelper::Utility#reindex'
+    test/system/uploads_test.rb:688:in 'block in UploadsTest#delete_test'
+    test/test_helper/utility.rb:86:in 'TestHelper::Utility#run_test'
+    test/system/uploads_test.rb:669:in 'UploadsTest#delete_test'
+    test/system/uploads_test.rb:167:in 'block in <class:UploadsTest>'
+
+bin/rails test test/system/uploads_test.rb:166
+
+UploadsTest#test_uploads_-_delete_select_-_admin = 0.87 s = .
+UploadsTest#test_uploads_system_test_coverage = 0.06 s = .
+UploadsTest#test_uploads_-_list_own_-_member = 1.23 s = .
+UploadsTest#test_uploads_-_show_select_-_anonymous = 0.39 s = .
+UploadsTest#test_uploads_-_index_-_member = 1.15 s = .
+UploadsTest#test_uploads_-_edit_select_-_member = 0.85 s = .
+UploadsTest#test_uploads_-_list_own_-_anonymous = 0.38 s = .
+UploadsTest#test_uploads_-_delete_select_-_anonymous = 0.36 s = .
+UploadsTest#test_uploads_-_index_-_anonymous = 0.38 s = .
+UploadsTest#test_uploads_-_new_-_anonymous = 0.38 s = .
+UploadsTest#test_uploads_-_delete_-_anonymous = 0.42 s = .
+UploadsTest#test_uploads_-_edit_-_anonymous = 0.40 s = .
+UploadsTest#test_uploads_-_delete_-_manager = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b07230bl61\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b07230bl61\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2 - E209A72F - MANAGER\",\"dc_creator\":[\"Edgar Allan Poe - 5995F1EE - MANAGER\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_delete_-_manager.png
+0.46 s = E
+
+
+Error:
+UploadsTest#test_uploads_-_delete_-_manager:
+IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)
+    app/services/concerns/api_service/common.rb:476:in 'ApiService::Common#transmit'
+    app/services/ingest_service/common.rb:76:in 'IngestService::Common#transmit'
+    app/services/concerns/api_service/common.rb:175:in 'ApiService::Common#api'
+    app/services/ingest_service/action/submissions.rb:184:in 'IngestService::Action::Submissions#api_send'
+    app/services/ingest_service/action/submissions.rb:61:in 'IngestService::Action::Submissions#put_records'
+    app/controllers/concerns/upload_concern.rb:587:in 'UploadConcern#reindex_record'
+    app/controllers/concerns/upload_concern.rb:545:in 'block in UploadConcern#reindex_submissions'
+    app/controllers/concerns/upload_concern.rb:544:in 'Enumerable#each_slice'
+    app/controllers/concerns/upload_concern.rb:544:in 'UploadConcern#reindex_submissions'
+    test/test_helper/utility.rb:819:in 'TestHelper::Utility#reindex'
+    test/system/uploads_test.rb:688:in 'block in UploadsTest#delete_test'
+    test/test_helper/utility.rb:86:in 'TestHelper::Utility#run_test'
+    test/system/uploads_test.rb:669:in 'UploadsTest#delete_test'
+    test/system/uploads_test.rb:171:in 'block in <class:UploadsTest>'
+
+bin/rails test test/system/uploads_test.rb:170
+
+UploadsTest#test_uploads_-_delete_select_-_member = 0.86 s = .
+UploadsTest#test_uploads_-_new_-_admin = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b07230dt75\",\"emma_retrievalLink\":\"http://localhost:34983/download/u6b07230dt75\",\"emma_webPageLink\":\"/upload/u6b07230dt75\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"New Upload - TITLE - BA5FDB4D - ADMINISTRATOR\",\"dc_creator\":[\"New Upload - AUTHOR - EE4D86DB - ADMINISTRATOR\"],\"dc_language\":[\"arm\"],\"dc_format\":\"rtf\",\"dc_type\":\"movingImage\",\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_new_-_admin.png
+6.46 s = F
+
+
+Failure:
+UploadsTest#test_uploads_-_new_-_admin [test/system/uploads_test.rb:542]:
+expected to find css ".flash-messages *" but there were no matches
+
+bin/rails test test/system/uploads_test.rb:142
+
+UploadsTest#test_uploads_-_new_-_member = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b072313r83\",\"emma_retrievalLink\":\"http://localhost:34983/download/u6b072313r83\",\"emma_webPageLink\":\"/upload/u6b072313r83\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"New Upload - TITLE - 5464094D - STANDARD\",\"dc_creator\":[\"New Upload - AUTHOR - 38FE7710 - STANDARD\"],\"dc_language\":[\"arm\"],\"dc_format\":\"rtf\",\"dc_type\":\"movingImage\",\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_new_-_member.png
+6.77 s = F
+
+
+Failure:
+UploadsTest#test_uploads_-_new_-_member [test/system/uploads_test.rb:542]:
+expected to find css ".flash-messages *" but there were no matches
+
+bin/rails test test/system/uploads_test.rb:134
+
+UploadsTest#test_uploads_-_edit_select_-_anonymous = 0.38 s = .
+UploadsTest#test_uploads_-_list_all_-_admin = 1.13 s = .
+UploadsTest#test_uploads_-_show_-_admin = 1.43 s = .
+UploadsTest#test_uploads_-_list_org_-_admin = 0.78 s = .
+UploadsTest#test_uploads_-_list_org_-_member = 1.05 s = .
+UploadsTest#test_uploads_-_delete_-_admin = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b07231ev20\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b07231ev20\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2 - 3A67CDBD - ADMINISTRATOR\",\"dc_creator\":[\"Edgar Allan Poe - C1A8CCC0 - ADMINISTRATOR\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_delete_-_admin.png
+0.39 s = E
+
+
+Error:
+UploadsTest#test_uploads_-_delete_-_admin:
+IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)
+    app/services/concerns/api_service/common.rb:476:in 'ApiService::Common#transmit'
+    app/services/ingest_service/common.rb:76:in 'IngestService::Common#transmit'
+    app/services/concerns/api_service/common.rb:175:in 'ApiService::Common#api'
+    app/services/ingest_service/action/submissions.rb:184:in 'IngestService::Action::Submissions#api_send'
+    app/services/ingest_service/action/submissions.rb:61:in 'IngestService::Action::Submissions#put_records'
+    app/controllers/concerns/upload_concern.rb:587:in 'UploadConcern#reindex_record'
+    app/controllers/concerns/upload_concern.rb:545:in 'block in UploadConcern#reindex_submissions'
+    app/controllers/concerns/upload_concern.rb:544:in 'Enumerable#each_slice'
+    app/controllers/concerns/upload_concern.rb:544:in 'UploadConcern#reindex_submissions'
+    test/test_helper/utility.rb:819:in 'TestHelper::Utility#reindex'
+    test/system/uploads_test.rb:688:in 'block in UploadsTest#delete_test'
+    test/test_helper/utility.rb:86:in 'TestHelper::Utility#run_test'
+    test/system/uploads_test.rb:669:in 'UploadsTest#delete_test'
+    test/system/uploads_test.rb:175:in 'block in <class:UploadsTest>'
+
+bin/rails test test/system/uploads_test.rb:174
+
+UploadsTest#test_uploads_-_list_org_-_anonymous = 0.54 s = .
+UploadsTest#test_uploads_-_show_select_-_admin = 0.81 s = .
+UploadsTest#test_uploads_-_show_select_-_member = 0.81 s = .
+UploadsTest#test_uploads_-_edit_-_member = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b072320z41\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2 - 3292E832 - STANDARD\",\"dc_creator\":[\"Edgar Allan Poe - 5E6B433F - STANDARD\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b072320z41\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_edit_-_member.png
+5.84 s = F
+
+
+Failure:
+UploadsTest#test_uploads_-_edit_-_member [test/system/uploads_test.rb:628]:
+expected to find css ".flash-messages *" but there were no matches
+
+bin/rails test test/system/uploads_test.rb:150
+
+UploadsTest#test_uploads_-_edit_select_-_admin = 0.79 s = .
+UploadsTest#test_uploads_-_edit_-_manager = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b072327n56\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"RWL - The Works of Edgar Allan Poe — Volume 2 - AE912767 - MANAGER\",\"dc_creator\":[\"Edgar Allan Poe - E59811DB - MANAGER\"],\"dc_language\":[\"arm\"],\"dc_rights\":\"creativeCommons\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"Short stories\",\"Fantasy fiction\",\"Horror tales, American\",\"American fiction -- 19th century\"],\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b072327n56\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_edit_-_manager.png
+5.81 s = F
+
+
+Failure:
+UploadsTest#test_uploads_-_edit_-_manager [test/system/uploads_test.rb:628]:
+expected to find css ".flash-messages *" but there were no matches
+
+bin/rails test test/system/uploads_test.rb:154
+
+UploadsTest#test_uploads_-_show_-_anonymous = 1.06 s = .
+UploadsTest#test_uploads_-_new_-_manager = >>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b07232fi72\",\"emma_retrievalLink\":\"http://localhost:34983/download/u6b07232fi72\",\"emma_webPageLink\":\"/upload/u6b07232fi72\",\"emma_lastRemediationDate\":\"2026-11-25\",\"emma_repositoryUpdateDate\":\"2026-11-25\",\"emma_repositoryMetadataUpdateDate\":\"2026-11-25\",\"dc_title\":\"New Upload - TITLE - CCB1D724 - MANAGER\",\"dc_creator\":[\"New Upload - AUTHOR - 6D0FD7A2 - MANAGER\"],\"dc_language\":[\"arm\"],\"dc_format\":\"rtf\",\"dc_type\":\"movingImage\",\"rem_complete\":true,\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"2026-11-25\",\"rem_comments\":\"FAKE - do not use\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): No address associated with hostname)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_new_-_manager.png
+6.61 s = F
+
+
+Failure:
+UploadsTest#test_uploads_-_new_-_manager [test/system/uploads_test.rb:542]:
+expected to find css ".flash-messages *" but there were no matches
+
+bin/rails test test/system/uploads_test.rb:138
+
+UploadsTest#test_uploads_-_index_-_admin = 2.81 s = .
+UploadsTest#test_uploads_-_list_all_-_anonymous = 0.42 s = .
+UploadsTest#test_uploads_-_records_-_APTrust_backup = [Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_uploads_-_records_-_APTrust_backup.png
+0.46 s = F
+
+
+Failure:
+UploadsTest#test_uploads_-_records_-_APTrust_backup [test/system/uploads_test.rb:195]:
+Missing top-level "entries"
+
+bin/rails test test/system/uploads_test.rb:182
+
+UploadsTest#test_uploads_-_list_all_-_member = 1.27 s = .
+ToolTest#test_tool_-_lookup_-_anonymous = 0.39 s = .
+ToolTest#test_tool_-_lookup_-_member = >>> world_cat | "catalog/search/worldcat/sru" | options = {query: "srw.au = \"King\" AND srw.ti = \"Carrie\" AND srw.la = \"eng\"", recordSchema: "info:srw/schema/1/dc", wskey: nil} | headers = {} | BODY:
+>>>
+<<< world_cat | "catalog/search/worldcat/sru" | status = 520 | error = #<ApiService::ResponseError: external service API error:  @http_status=520, @http_response=#<Faraday::Response:0x0000768195fd3080 @on_complete_callbacks=[], @env=#<Faraday::Env @method=:get @url=#<URI::HTTPS https://worldcat.org/webservices/catalog/search/worldcat/sru?query=srw.au+%3D+%22King%22+AND+srw.ti+%3D+%22Carrie%22+AND+srw.la+%3D+%22eng%22&recordSchema=info%3Asrw%2Fschema%2F1%2Fdc&wskey> @request=#<Faraday::RequestOptions params_encoder=Faraday::FlatParamsEncoder> @request_headers={"User-Agent" => "Faraday v2.13.4"} @ssl=#<Faraday::SSLOptions verify=true> @response=#<Faraday::Response:0x0000768195fd3080 ...> @response_headers={"date" => "Wed, 25 Nov 2026 18:04:43 GMT", "content-type" => "text/html; charset=UTF-8", "content-length" => "7329", "connection" => "keep-alive", "retry-after" => "60", "cache-control" => "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0", "expires" => "Thu, 01 Jan 1970 00:00:01 GMT", "referrer-policy" => "same-origin", "x-frame-options" => "SAMEORIGIN", "server" => "cloudflare", "cf-ray" => "a60293d53f1add37-EWR"} @status=520 @reason_phrase="<none>" @response_body="<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!--<![endif]-->\n<head>\n\n<title>worldcat.org | 520: Web server is returning an unknown error</title>\n<meta charset=\"UTF-8\" />\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\n<meta name=\"robots\" content=\"noindex, nofollow\" />\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n<link rel=\"stylesheet\" id=\"cf_styles-css\" href=\"/cdn-cgi/styles/main.css\" />\n</head>\n<body>\n<div id=\"cf-wrapper\">\n    <div id=\"cf-error-details\" class=\"p-0\">\n        <header class=\"mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8\">\n            <h1 class=\"inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2\">\n                <span class=\"inline-block\">Web server is returning an unknown error</span>\n                <span class=\"code-label\">Error code 520</span>\n            </h1>\n            <div>\n                Visit <a href=\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&utm_campaign=worldcat.org\" target=\"_blank\" rel=\"noopener noreferrer\">cloudflare.com</a> for more information.\n            </div>\n            <div class=\"mt-3\">2026-11-25 18:04:43 UTC</div>\n        </header>\n        <div class=\"my-8 bg-gradient-gray\">\n            <div class=\"w-240 lg:w-full mx-auto\">\n                <div class=\"clearfix md:px-8\">\n                    <div id=\"cf-browser-status\" class=\" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\">\n  <div class=\"relative mb-10 md:m-0\">\n    \n    <span class=\"cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat\"></span>\n    <span class=\"cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\"></span>\n    \n  </div>\n  <span class=\"md:block w-full truncate\">You</span>\n  <h3 class=\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\">\n  \n    Browser\n  \n  </h3>\n  \n  <span class=\"leading-1.3 text-2xl text-green-success\">Working</span>\n  \n</div>\n                    <div id=\"cf-cloudflare-status\" class=\" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\">\n  <div class=\"relative mb-10 md:m-0\">\n    <a href=\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&#38;utm_campaign=worldcat.org\" target=\"_blank\" rel=\"noopener noreferrer\">\n    <span class=\"cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat\"></span>\n    <span class=\"cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\"></span>\n    </a>\n  </div>\n  <span class=\"md:block w-full truncate\">Newark</span>\n  <h3 class=\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\">\n  <a href=\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&utm_campaign=worldcat.org\" target=\"_blank\" rel=\"noopener noreferrer\">\n    Cloudflare\n  </a>\n  </h3>\n  \n  <span class=\"leading-1.3 text-2xl text-green-success\">Working</span>\n  \n</div>\n                    <div id=\"cf-host-status\" class=\"cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\">\n  <div class=\"relative mb-10 md:m-0\">\n    \n    <span class=\"cf-icon-server block md:hidden h-20 bg-center bg-no-repeat\"></span>\n    <span class=\"cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\"></span>\n    \n  </div>\n  <span class=\"md:block w-full truncate\">worldcat.org</span>\n  <h3 class=\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\">\n  \n    Host\n  \n  </h3>\n  \n  <span class=\"leading-1.3 text-2xl text-red-error\">Error</span>\n  \n</div>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"w-240 lg:w-full mx-auto mb-8 lg:px-8\">\n            <div class=\"clearfix\">\n                <div class=\"w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed\">\n                    <h2 class=\"text-3xl font-normal leading-1.3 mb-4\">What happened?</h2>\n                    <p>There is an unknown connection issue between Cloudflare and the origin web server. As a result, the web page can not be displayed.</p>\n                </div>\n                <div class=\"w-1/2 md:w-full float-left leading-relaxed\">\n                    <h2 class=\"text-3xl font-normal leading-1.3 mb-4\">What can I do?</h2>\n                    \n                <h3 class=\"text-15 font-semibold mb-2\">If you are a visitor of this website:</h3>\n                <p class=\"mb-6\">Please try again in a few minutes.</p>\n\n                <h3 class=\"text-15 font-semibold mb-2\">If you are the owner of this website:</h3>\n                <p><span>There is an issue between Cloudflare's cache and your origin web server. Cloudflare monitors for these errors and automatically investigates the cause. To help support the investigation, you can pull the corresponding error log from your web server and submit it our support team.  Please include the Ray ID (which is at the bottom of this error page).</span> <a rel=\"noopener noreferrer\" href=   \"https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-520/\">Additional troubleshooting resources</a>.</p>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300\">\n    <p class=\"text-13\">\n      <span class=\"cf-footer-item sm:block sm:mb-1\">Cloudflare Ray ID: <strong class=\"font-semibold\">a60293d53f1add37</strong></span>\n      <span class=\"cf-footer-separator sm:hidden\">&bull;</span>\n      <span id=\"cf-footer-item-ip\" class=\"cf-footer-item hidden sm:block sm:mb-1\">\n        Your IP:\n        <button type=\"button\" id=\"cf-footer-ip-reveal\" class=\"cf-footer-ip-reveal-btn\">Click to reveal</button>\n        <span class=\"hidden\" id=\"cf-footer-ip\">137.238.13.106</span>\n        <span class=\"cf-footer-separator sm:hidden\">&bull;</span>\n      </span>\n      <span class=\"cf-footer-item sm:block sm:mb-1\"><span>Performance &amp; security by</span> <a rel=\"noopener noreferrer\" href=\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&#38;utm_campaign=worldcat.org\" id=\"brand_link\" target=\"_blank\">Cloudflare</a></span>\n      \n    </p>\n    <script>(function(){function d(){var b=a.getElementById(\"cf-footer-item-ip\"),c=a.getElementById(\"cf-footer-ip-reveal\");b&&\"classList\"in b&&(b.classList.remove(\"hidden\"),c.addEventListener(\"click\",function(){c.classList.add(\"hidden\");a.getElementById(\"cf-footer-ip\").classList.remove(\"hidden\")}))}var a=document;document.addEventListener&&a.addEventListener(\"DOMContentLoaded\",d)})();</script>\n  </div><!-- /.error-footer -->\n\n    </div>\n</div>\n</body>\n</html>">>, @cause=nil> | DATA: 7329 bytes:
+<<< <!DOCTYPE html>
+<<< <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<<< <!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<<< <!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
+<<< <!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<<< <head>
+<<< 
+<<< <title>worldcat.org | 520: Web server is returning an unknown error</title>
+<<< <meta charset="UTF-8" />
+<<< <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<<< <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<<< <meta name="robots" content="noindex, nofollow" />
+<<< <meta name="viewport" content="width=device-width,initial-scale=1" />
+<<< <link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/main.css" />
+<<< </head>
+<<< <body>
+<<< <div id="cf-wrapper">
+<<<     <div id="cf-error-details" class="p-0">
+<<<         <header class="mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8">
+<<<             <h1 class="inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2">
+<<<                 <span class="inline-block">Web server is returning an unknown error</span>
+<<<                 <span class="code-label">Error code 520</span>
+<<<             </h1>
+<<<             <div>
+<<<                 Visit <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&utm_campaign=worldcat.org" target="_blank" rel="noopener noreferrer">cloudflare.com</a> for more information.
+<<<             </div>
+<<<             <div class="mt-3">2026-11-25 18:04:43 UTC</div>
+<<<         </header>
+<<<         <div class="my-8 bg-gradient-gray">
+<<<             <div class="w-240 lg:w-full mx-auto">
+<<<                 <div class="clearfix md:px-8">
+<<<                     <div id="cf-browser-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+<<<   <div class="relative mb-10 md:m-0">
+<<<     
+<<<     <span class="cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat"></span>
+<<<     <span class="cf-ic…
+>>> crossref | "works" | options = {"query.author": ["King"], "query.title": ["Carrie"], mailto: "emma4accessibility@virginia.edu"} | headers = {} | BODY:
+>>>
+<<< crossref | "works" | status = 200 | error = (none) | DATA: 187 bytes:
+<<< {"status":"ok","message-type":"work-list","message-version":"1.0.0","message":{"facets":{},"total-results":0,"items":[],"items-per-page":20,"query":{"start-index":0,"search-terms":null}}}
+>>> google_books | "v1/volumes" | options = {q: "inauthor:King intitle:Carrie", langRestrict: "en", prettyPrint: false} | headers = {} | BODY:
+>>>
+<<< google_books | "v1/volumes" | status = 429 | error = #<ApiService::RequestError: external service API error: {
+<<<   "error": {
+<<<     "code": 429,
+<<<     "message": "Quota exceeded for quota metric 'Queries' and limit 'Queries per day' of service 'books.googleapis.com' for consumer 'project_number:624717413613'.",
+<<<     "errors": [
+<<<       {
+<<<         "message": "Quota exceeded for quota metric 'Queries' and limit 'Queries per day' of service 'books.googleapis.com' for consumer 'project_number:624717413613'.",
+<<<         "domain": "global",
+<<<         "reason": "rateLimitExceeded"
+<<<       }
+<<<     ],
+<<<     "status": "RESOURCE_EXHAUSTED",
+<<<     "details": [
+<<<       {
+<<<         "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+<<<         "reason": "RATE_LIMIT_EXCEEDED",
+<<<         "domain": "googleapis.com",
+<<<         "metadata": {
+<<<           "consumer": "projects/624717413613",
+<<<           "quota_metric": "books.googleapis.com/default",
+<<<           "quota_limit_value": "0",
+<<<           "service": "books.googleapis.com",
+<<<           "quota_location": "global",
+<<<           "quota_limit": "defaultPerDayPerProject",
+<<<           "quota_unit": "1/d/{project}"
+<<<         }
+<<<       },
+<<<       {
+<<<         "@type": "type.googleapis.com/google.rpc.Help",
+<<<         "links": [
+<<<           {
+<<<             "description": "Request a higher quota limit.",
+<<<             "url": "https://cloud.google.com/docs/quotas/help/request_increase"
+<<<           }
+<<<         ]
+<<<       }
+<<<     ]
+<<<   }
+<<< } @http_status=429, @http_response=#<Faraday::Response:0x0000768195c1a330 @on_complete_callbacks=[], @env=#<Faraday::Env @method=:get @url=#<URI::HTTPS https://www.googleapis.com/books/v1/volumes?langRestrict=en&prettyPrint=false&q=inauthor%3AKing+intitle%3ACarrie> @request=#<Faraday::RequestOptions params_encoder=Faraday::FlatParamsEncoder> @request_headers={"User-Agent" => "Faraday v2.13.4"} @ssl=#<Faraday::SSLOptions verify=true> @response=#<Faraday::Response:0x0000768195c1a330 ...> @response_headers={"vary" => "Origin, X-Origin, Referer", "content-type" => "application/json; charset=UTF-8", "content-encoding" => "gzip", "date" => "Wed, 25 Nov 2026 18:04:44 GMT", "server" => "ESF", "x-xss-protection" => "0", "x-frame-options" => "SAMEORIGIN", "x-content-type-options" => "nosniff", "alt-svc" => "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000", "transfer-encoding" => "chunked"} @status=429 @reason_phrase="Too Many Requests" @response_body="{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"Quota exceeded for quota metric 'Queries' and limit 'Queries per day' of service 'books.googleapis.com' for consumer 'project_number:624717413613'.\",\n    \"errors\": [\n      {\n        \"message\": \"Quota exceeded for quota metric 'Queries' and limit 'Queries per day' of service 'books.googleapis.com' for consumer 'project_number:624717413613'.\",\n        \"domain\": \"global\",\n        \"reason\": \"rateLimitExceeded\"\n      }\n    ],\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"RATE_LIMIT_EXCEEDED\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"consumer\": \"projects/624717413613\",\n          \"quota_metric\": \"books.googleapis.com/default\",\n          \"quota_limit_value\": \"0\",\n          \"service\": \"books.googleapis.com\",\n          \"quota_location\": \"global\",\n          \"quota_limit\": \"defaultPerDayPerProject\",\n          \"quota_unit\": \"1/d/{project}\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n          {\n            \"description\": \"Request a higher quota limit.\",\n            \"url\": \"https://cloud.google.com/docs/quotas/help/request_increase\"\n          }\n        ]\n      }\n    ]\n  }\n}\n">>, @cause=nil> | DATA: 1306 bytes:
+<<< {
+<<<   "error": {
+<<<     "code": 429,
+<<<     "message": "Quota exceeded for quota metric 'Queries' and limit 'Queries per day' of service 'books.googleapis.com' for consumer 'project_number:624717413613'.",
+<<<     "errors": [
+<<<       {
+<<<         "message": "Quota exceeded for quota metric 'Queries' and limit 'Queries per day' of service 'books.googleapis.com' for consumer 'project_number:624717413613'.",
+<<<         "domain": "global",
+<<<         "reason": "rateLimitExceeded"
+<<<       }
+<<<     ],
+<<<     "status": "RESOURCE_EXHAUSTED",
+<<<     "details": [
+<<<       {
+<<<         "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+<<<         "reason": "RATE_LIMIT_EXCEEDED",
+<<<         "domain": "googleapis.com",
+<<<         "metadata": {
+<<<           "consumer": "projects/624717413613",
+<<<           "quota_metric": "books.googleapis.com/default",
+<<<           "quota_limit_value": "0",
+<<<           "service": "books.googleapis.com",
+<<<           "quota_location": "global",
+<<<           "quota_limit": "defaultPerDayPerProject",
+<<<           "quota_unit": "1/d/{project}"
+<<<         }
+<<<       },
+<<<       {
+<<<         "@type": "type.googleapis.com/google.rpc.Help",
+<<<         "links": [
+<<<           {
+<<<             "description": "Request a higher quota limit.",
+<<<             "url": "https://cloud.google.com/docs/quotas/help/request_increase"
+<<<           }
+<<<         ]
+<<<       }
+<<<     ]
+<<<   }
+<<< }
+<<<
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_tool_-_lookup_-_member.png
+21.47 s = F
+
+
+Failure:
+ToolTest#test_tool_-_lookup_-_member [test/test_helper/system_tests/_common.rb:202]:
+[timeout] pass 5
+
+bin/rails test test/system/tool_test.rb:34
+
+ToolTest#test_tool_system_test_coverage = 0.06 s = .
+ToolTest#test_tool_-_md_-_member = [Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_tool_-_md_-_member.png
+20.98 s = F
+
+
+Failure:
+ToolTest#test_tool_-_md_-_member [test/test_helper/system_tests/_common.rb:202]:
+[timeout] pass 3
+
+bin/rails test test/system/tool_test.rb:26
+
+ToolTest#test_tool_-_md_-_anonymous = 0.43 s = .
+DownloadsTest#test_downloads_-_delete_select_-_member = 1.14 s = .
+DownloadsTest#test_downloads_-_delete_select_-_admin = 1.15 s = .
+DownloadsTest#test_downloads_-_edit_select_-_anonymous = 0.52 s = .
+DownloadsTest#test_downloads_-_delete_-_manager = 1.17 s = .
+DownloadsTest#test_downloads_-_list_org_-_member = 1.24 s = .
+DownloadsTest#test_downloads_-_edit_select_-_admin = 1.07 s = .
+DownloadsTest#test_downloads_-_list_own_-_manager = 1.12 s = .
+DownloadsTest#test_downloads_-_delete_select_-_manager = 1.04 s = .
+DownloadsTest#test_downloads_-_edit_-_manager = 1.04 s = .
+DownloadsTest#test_downloads_-_index_-_admin = 1.21 s = .
+DownloadsTest#test_downloads_-_show_-_anonymous = 0.50 s = .
+DownloadsTest#test_downloads_-_list_org_-_manager = 1.38 s = .
+DownloadsTest#test_downloads_-_index_-_manager = 1.20 s = .
+DownloadsTest#test_downloads_-_delete_-_member = 1.26 s = .
+DownloadsTest#test_downloads_-_register = Test is missing assertions: `test_downloads_-_register` /home/sullivm/code/emma/test/system/downloads_test.rb:191
+0.08 s = .
+DownloadsTest#test_downloads_-_show_select_-_member = 1.43 s = .
+DownloadsTest#test_downloads_-_delete_-_admin = 6.44 s = .
+DownloadsTest#test_downloads_-_list_own_-_admin = 3.18 s = .
+DownloadsTest#test_downloads_-_list_all_-_admin = 1.15 s = .
+DownloadsTest#test_downloads_-_delete_select_-_dev = 1.12 s = .
+DownloadsTest#test_downloads_-_new_-_admin = 4.20 s = .
+DownloadsTest#test_downloads_-_show_select_-_anonymous = 0.68 s = .
+DownloadsTest#test_downloads_-_show_select_-_manager = 1.44 s = .
+DownloadsTest#test_downloads_-_index_-_anonymous = 0.52 s = .
+DownloadsTest#test_downloads_-_list_own_-_member = 1.57 s = .
+DownloadsTest#test_downloads_-_delete_-_anonymous = 0.55 s = .
+DownloadsTest#test_downloads_-_index_-_member = 1.85 s = .
+DownloadsTest#test_downloads_-_delete_-_dev = 6.35 s = .
+DownloadsTest#test_downloads_-_delete_select_-_anonymous = 0.50 s = .
+DownloadsTest#test_downloads_-_list_all_-_dev = 1.21 s = .
+DownloadsTest#test_downloads_-_list_all_-_anonymous = 0.58 s = .
+DownloadsTest#test_downloads_-_list_own_-_dev = 3.17 s = .
+DownloadsTest#test_downloads_-_list_own_-_anonymous = 0.49 s = .
+DownloadsTest#test_downloads_-_edit_-_admin = 4.06 s = .
+DownloadsTest#test_downloads_-_new_-_manager = 0.84 s = .
+DownloadsTest#test_downloads_-_edit_-_dev = 3.65 s = .
+DownloadsTest#test_downloads_-_edit_select_-_dev = 0.78 s = .
+DownloadsTest#test_downloads_-_list_org_-_anonymous = 0.46 s = .
+DownloadsTest#test_downloads_-_index_-_dev = 1.17 s = .
+DownloadsTest#test_downloads_system_test_coverage = 0.07 s = .
+DownloadsTest#test_downloads_-_show_select_-_admin = 0.94 s = .
+DownloadsTest#test_downloads_-_show_-_dev = 1.16 s = .
+DownloadsTest#test_downloads_-_list_all_-_member = 1.00 s = .
+DownloadsTest#test_downloads_-_show_-_manager = 0.71 s = .
+DownloadsTest#test_downloads_-_edit_-_anonymous = 0.32 s = .
+DownloadsTest#test_downloads_-_new_-_anonymous = 0.36 s = .
+DownloadsTest#test_downloads_-_list_org_-_dev = 0.77 s = .
+DownloadsTest#test_downloads_-_list_all_-_manager = 0.76 s = .
+DownloadsTest#test_downloads_-_new_-_member = 1.12 s = .
+DownloadsTest#test_downloads_-_new_-_dev = 3.80 s = .
+DownloadsTest#test_downloads_-_show_-_admin = 0.98 s = .
+DownloadsTest#test_downloads_-_edit_-_member = 1.21 s = .
+DownloadsTest#test_downloads_-_edit_select_-_manager = 0.92 s = .
+DownloadsTest#test_downloads_-_show_select_-_dev = 1.00 s = .
+DownloadsTest#test_downloads_-_list_org_-_admin = 1.66 s = .
+DownloadsTest#test_downloads_-_edit_select_-_member = 1.13 s = .
+DownloadsTest#test_downloads_-_show_-_member = 1.09 s = .
+AccountsTest#test_accounts_-_delete_-_member = 1.10 s = .
+AccountsTest#test_accounts_-_list_all_-_member = 1.04 s = .
+AccountsTest#test_accounts_-_show_-_member = 2.07 s = .
+AccountsTest#test_accounts_system_test_coverage = 0.07 s = .
+AccountsTest#test_accounts_-_delete_select_-_anonymous = 0.48 s = .
+AccountsTest#test_accounts_-_show_current_-_admin = 1.92 s = .
+AccountsTest#test_accounts_-_list_all_-_admin = 1.47 s = .
+AccountsTest#test_accounts_-_show_-_admin = 2.02 s = .
+AccountsTest#test_accounts_-_edit_current_-_anonymous = 0.41 s = .
+AccountsTest#test_accounts_-_delete_select_-_admin = 0.98 s = .
+AccountsTest#test_accounts_-_edit_select_-_admin = 0.94 s = .
+AccountsTest#test_accounts_-_delete_-_admin = 5.76 s = .
+AccountsTest#test_accounts_-_list_org_-_admin = 0.76 s = .
+AccountsTest#test_accounts_-_index_-_anonymous = 0.36 s = .
+AccountsTest#test_accounts_-_edit_-_admin = 4.34 s = .
+AccountsTest#test_accounts_-_edit_current_-_member = 3.82 s = .
+AccountsTest#test_accounts_-_delete_select_-_member = 0.90 s = .
+AccountsTest#test_accounts_-_show_-_anonymous = 0.35 s = .
+AccountsTest#test_accounts_-_show_select_-_manager = 0.91 s = .
+AccountsTest#test_accounts_-_new_-_manager = 5.26 s = .
+AccountsTest#test_accounts_-_show_select_-_admin = 0.97 s = .
+AccountsTest#test_accounts_-_delete_-_anonymous = 0.44 s = .
+AccountsTest#test_accounts_-_delete_-_manager = 6.23 s = .
+AccountsTest#test_accounts_-_delete_select_-_manager = 0.77 s = .
+AccountsTest#test_accounts_-_list_org_-_anonymous = 0.37 s = .
+AccountsTest#test_accounts_-_edit_-_manager = 4.32 s = .
+AccountsTest#test_accounts_-_edit_current_-_admin = 3.67 s = .
+AccountsTest#test_accounts_-_edit_select_-_anonymous = 0.36 s = .
+AccountsTest#test_accounts_-_show_select_-_member = 0.79 s = .
+AccountsTest#test_accounts_-_edit_-_anonymous = 0.43 s = .
+AccountsTest#test_accounts_-_list_all_-_anonymous = 0.44 s = .
+AccountsTest#test_accounts_-_index_-_admin = 1.26 s = .
+AccountsTest#test_accounts_-_index_-_member = 1.50 s = .
+AccountsTest#test_accounts_-_show_current_-_member = 1.64 s = .
+AccountsTest#test_accounts_-_show_select_-_anonymous = 0.37 s = .
+AccountsTest#test_accounts_-_show_current_-_anonymous = 0.36 s = .
+AccountsTest#test_accounts_-_new_-_admin = 4.23 s = .
+AccountsTest#test_accounts_-_edit_-_member = 0.90 s = .
+AccountsTest#test_accounts_-_new_-_member = 0.92 s = .
+AccountsTest#test_accounts_-_list_org_-_member = 0.85 s = .
+AccountsTest#test_accounts_-_edit_current_-_manager = 4.10 s = .
+AccountsTest#test_accounts_-_edit_select_-_manager = 1.04 s = .
+AccountsTest#test_accounts_-_new_-_anonymous = 0.50 s = .
+AccountsTest#test_accounts_-_edit_select_-_member = 1.09 s = .
+ManifestsTest#test_manifests_-_delete_select_-_anonymous = 0.44 s = .
+ManifestsTest#test_manifests_-_show_-_anonymous = 0.47 s = .
+ManifestsTest#test_manifests_-_remit_select_-_anonymous = 0.46 s = .
+ManifestsTest#test_manifests_-_index_-_member = 1.10 s = .
+ManifestsTest#test_manifests_-_edit_-_anonymous = 0.40 s = .
+ManifestsTest#test_manifests_-_list_own_-_member = 0.98 s = .
+ManifestsTest#test_manifests_system_test_coverage = 0.07 s = .
+ManifestsTest#test_manifests_-_show_select_-_anonymous = 0.37 s = .
+ManifestsTest#test_manifests_-_import_-_json_-_edit = 6.89 s = .
+ManifestsTest#test_manifests_-_delete_select_-_member = 0.86 s = .
+ManifestsTest#test_manifests_-_index_-_anonymous = 0.37 s = .
+ManifestsTest#test_manifests_-_show_-_member = 0.92 s = .
+ManifestsTest#test_manifests_-_new_-_member = RECOVERED "FormatFeature" #<Selenium::WebDriver::Error::ElementNotInteractableError:"element not interactable\n  (Session info: chrome=158.0.8127.88)">
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_manifests_-_new_-_member.png
+41.41 s = E
+
+
+Error:
+ManifestsTest#test_manifests_-_new_-_member:
+Capybara::ElementNotFound: Unable to find visible link or button "Save"
+    test/system/manifests_test.rb:509:in 'block in ManifestsTest#new_test'
+    test/test_helper/utility.rb:86:in 'TestHelper::Utility#run_test'
+    test/system/manifests_test.rb:463:in 'ManifestsTest#new_test'
+    test/system/manifests_test.rb:145:in 'block in <class:ManifestsTest>'
+
+bin/rails test test/system/manifests_test.rb:144
+
+ManifestsTest#test_manifests_-_new_-_anonymous = 0.40 s = .
+ManifestsTest#test_manifests_-_edit_select_-_anonymous = 0.39 s = .
+ManifestsTest#test_manifests_-_edit_select_-_admin = 0.88 s = .
+ManifestsTest#test_manifests_-_show_select_-_member = 0.90 s = .
+ManifestsTest#test_manifests_-_delete_-_member = 5.54 s = .
+ManifestsTest#test_manifests_-_delete_select_-_admin = 0.89 s = .
+ManifestsTest#test_manifests_-_edit_-_member = RECOVERED "SeriesPosition" #<Selenium::WebDriver::Error::ElementNotInteractableError:"element not interactable\n  (Session info: chrome=158.0.8127.88)">
+RECOVERED "Relation" #<Selenium::WebDriver::Error::ElementNotInteractableError:"element not interactable\n  (Session info: chrome=158.0.8127.88)">
+RECOVERED "Coverage" #<Selenium::WebDriver::Error::ElementNotInteractableError:"element not interactable\n  (Session info: chrome=158.0.8127.88)">
+40.77 s = .
+ManifestsTest#test_manifests_-_list_own_-_admin = 1.17 s = .
+ManifestsTest#test_manifests_-_import_-_csv_-_create = 6.18 s = .
+ManifestsTest#test_manifests_-_import_-_json_-_create = 5.64 s = .
+ManifestsTest#test_manifests_-_list_all_-_admin = 1.18 s = .
+ManifestsTest#test_manifests_-_edit_select_-_member = 0.89 s = .
+ManifestsTest#test_manifests_-_list_own_-_anonymous = 0.37 s = .
+ManifestsTest#test_manifests_-_list_org_-_admin = 0.75 s = .
+ManifestsTest#test_manifests_-_list_org_-_member = 0.96 s = .
+ManifestsTest#test_manifests_-_delete_-_anonymous = 0.40 s = .
+ManifestsTest#test_manifests_-_list_org_-_anonymous = 0.36 s = .
+ManifestsTest#test_manifests_-_show_select_-_admin = 0.96 s = .
+ManifestsTest#test_manifests_-_show_-_admin = 0.91 s = .
+ManifestsTest#test_manifests_-_remit_-_member = === STEP await_upload | ActionCable-worker-4 | 3 recs = ["630717571", "311479322", "1017031995"] = [#<ManifestItem id: 630717571, manifest_id: "4b4387f3-0755-5de4-a5a6-ffd36b4a40f5", row: 2, delta: 0, editing: nil, deleting: nil, last_saved: "2026-11-25 18:11:03.000000000 +0000", last_lookup: nil, last_submit: nil, created_at: "2026-11-25 18:10:03.627817000 +0000", updated_at: "2026-11-25 18:10:03.627817000 +0000", data_status: "complete", file_status: "complete", ready_status: "ready", file_data: {"name" => "file_b.txt", "size" => "34"}, repository: nil, emma_publicationDate: "2010-01-02", dc_title: "FAKE dc_title - do not use", emma_version: "FAKE emma_version", bib_seriesType: "newspaper", bib_series: "FAKE bib_series", bib_seriesPosition: "FAKE bib_seriesPosition", dc_publisher: "FAKE dc_publisher", dc_creator: "FAKE dc_creator", dc_identifier: "9785485996185; 9781951717148", dc_relation: "9787034650203; 9781325604692", dc_language: ["arm", "afr"], dc_rights: "creativeCommons", dc_description: "FAKE dc_description", dc_subject: "FAKE dc_subject; second; third", dc_type: "movingImage", dc_format: "ep...
+=== STEP promote_file | ActionCable-worker-4 | 3 recs = ["630717571", "311479322", "1017031995"] = [#<ManifestItem id: 630717571, manifest_id: "4b4387f3-0755-5de4-a5a6-ffd36b4a40f5", row: 2, delta: 0, editing: nil, deleting: nil, last_saved: "2026-11-25 18:11:03.000000000 +0000", last_lookup: nil, last_submit: nil, created_at: "2026-11-25 18:10:03.627817000 +0000", updated_at: "2026-11-25 18:10:03.627817000 +0000", data_status: "complete", file_status: "complete", ready_status: "ready", file_data: {"id" => "d2a196906e5dc891b39ed102a88f124e.txt", "storage" => "cache", "metadata" => {"filename" => "file_b.txt", "size" => 34, "mime_type" => "text/plain"}}, repository: nil, emma_publicationDate: "2010-01-02", dc_title: "FAKE dc_title - do not use", emma_version: "FAKE emma_version", bib_seriesType: "newspaper", bib_series: "FAKE bib_series", bib_seriesPosition: "FAKE bib_seriesPosition", dc_publisher: "FAKE dc_publisher", dc_creator: "FAKE dc_creator", dc_identifier: "9785485996185; 9781951717148", dc_relation: "9787034650203; 9781325604692", dc_language: ["arm", "afr"], dc_rights: "creativeCommons", dc_des...
+=== STEP add_to_index | ActionCable-worker-4 | 3 recs = ["630717571", "311479322", "1017031995"] | 3 fields = [{bib_series: "FAKE bib_series", bib_seriesPosition: "FAKE bib_seriesPosition", bib_seriesType: "newspaper", dc_creator: ["FAKE dc_creator"], dc_description: "FAKE dc_description", dc_format: "epub", dc_identifier: ["isbn:9785485996185", "isbn:9781951717148"], dc_language: ["arm", "afr"], dc_publisher: "FAKE dc_publisher", dc_relation: ["isbn:9787034650203", "isbn:9781325604692"], dc_rights: "creativeCommons", dc_subject: ["FAKE dc_subject; second; third"], dc_title: "FAKE dc_title - do not use", dc_type: "movingImage", dcterms_dateCopyright: "1849", emma_formatFeature: ["grade2", "ueb", "tts"], emma_publicationDate: "2010-01-02", emma_version: "FAKE emma_version", rem_comments: "FAKE rem_comments", rem_complete: true, rem_coverage: "FAKE rem_coverage", rem_metadataSource: ["FAKE rem_metadataSource; second; third"], rem_remediatedAspects: ["linkedToc", "addedMathMl", "taggedPdf"], rem_remediatedBy: ["FAKE rem_remediatedBy; second; third"], rem_remediationDate: "1960-04-18", rem_source: "publisher", rem_sta...
+>>> ingest | "records" | options = {} | headers = {"Content-Type" => "application/json"} | BODY:
+>>> "[{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b07247dm42\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b07247dm42\",\"emma_publicationDate\":\"2010-01-02\",\"emma_version\":\"FAKE emma_version\",\"emma_formatFeature\":[\"grade2\",\"ueb\",\"tts\"],\"dc_title\":\"FAKE dc_title - do not use\",\"dc_creator\":[\"FAKE dc_creator\"],\"dc_identifier\":[\"isbn:9785485996185\",\"isbn:9781951717148\"],\"dc_publisher\":\"FAKE dc_publisher\",\"dc_relation\":[\"isbn:9787034650203\",\"isbn:9781325604692\"],\"dc_language\":[\"arm\",\"afr\"],\"dc_rights\":\"creativeCommons\",\"dc_description\":\"FAKE dc_description\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"FAKE dc_subject; second; third\"],\"dcterms_dateCopyright\":\"1849\",\"s_accessibilityFeature\":[\"index\",\"latex\",\"MathML\"],\"s_accessibilityControl\":[\"fullKeyboardControl\",\"fullMouseControl\"],\"s_accessibilityHazard\":[\"flashing\",\"noMotionSimulationHazard\"],\"s_accessibilitySummary\":\"FAKE s_accessibilitySummary\",\"s_accessMode\":[\"textual\",\"visual\",\"textOnVisual\"],\"s_accessModeSufficient\":[\"textual\",\"visual\"],\"rem_source\":\"publisher\",\"rem_metadataSource\":[\"FAKE rem_metadataSource; second; third\"],\"rem_remediatedBy\":[\"FAKE rem_remediatedBy; second; third\"],\"rem_complete\":true,\"rem_coverage\":\"FAKE rem_coverage\",\"rem_remediatedAspects\":[\"linkedToc\",\"addedMathMl\",\"taggedPdf\"],\"rem_textQuality\":\"rekeyed\",\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"1960-04-18\",\"rem_comments\":\"FAKE rem_comments\"},{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b07247dt43\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b07247dt43\",\"emma_publicationDate\":\"2010-01-02\",\"emma_version\":\"FAKE emma_version\",\"emma_formatFeature\":[\"grade2\",\"ueb\",\"tts\"],\"dc_title\":\"FAKE dc_title - do not use\",\"dc_creator\":[\"FAKE dc_creator\"],\"dc_identifier\":[\"isbn:9785485996185\",\"isbn:9781951717148\"],\"dc_publisher\":\"FAKE dc_publisher\",\"dc_relation\":[\"isbn:9787034650203\",\"isbn:9781325604692\"],\"dc_language\":[\"arm\",\"afr\"],\"dc_rights\":\"creativeCommons\",\"dc_description\":\"FAKE dc_description\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"FAKE dc_subject; second; third\"],\"dcterms_dateCopyright\":\"1849\",\"s_accessibilityFeature\":[\"index\",\"latex\",\"MathML\"],\"s_accessibilityControl\":[\"fullKeyboardControl\",\"fullMouseControl\"],\"s_accessibilityHazard\":[\"flashing\",\"noMotionSimulationHazard\"],\"s_accessibilitySummary\":\"FAKE s_accessibilitySummary\",\"s_accessMode\":[\"textual\",\"visual\",\"textOnVisual\"],\"s_accessModeSufficient\":[\"textual\",\"visual\"],\"rem_source\":\"publisher\",\"rem_metadataSource\":[\"FAKE rem_metadataSource; second; third\"],\"rem_remediatedBy\":[\"FAKE rem_remediatedBy; second; third\"],\"rem_complete\":true,\"rem_coverage\":\"FAKE rem_coverage\",\"rem_remediatedAspects\":[\"linkedToc\",\"addedMathMl\",\"taggedPdf\"],\"rem_textQuality\":\"rekeyed\",\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"1960-04-18\",\"rem_comments\":\"FAKE rem_comments\"},{\"serializer_type\":\"json\",\"emma_repository\":\"emma\",\"emma_repositoryRecordId\":\"u6b07247dv44\",\"emma_retrievalLink\":\"https://emma.lib.virginia.edu/download/u6b07247dv44\",\"emma_publicationDate\":\"2010-01-02\",\"emma_version\":\"FAKE emma_version\",\"emma_formatFeature\":[\"grade2\",\"ueb\",\"tts\"],\"dc_title\":\"FAKE dc_title - do not use\",\"dc_creator\":[\"FAKE dc_creator\"],\"dc_identifier\":[\"isbn:9785485996185\",\"isbn:9781951717148\"],\"dc_publisher\":\"FAKE dc_publisher\",\"dc_relation\":[\"isbn:9787034650203\",\"isbn:9781325604692\"],\"dc_language\":[\"arm\",\"afr\"],\"dc_rights\":\"creativeCommons\",\"dc_description\":\"FAKE dc_description\",\"dc_format\":\"epub\",\"dc_type\":\"movingImage\",\"dc_subject\":[\"FAKE dc_subject; second; third\"],\"dcterms_dateCopyright\":\"1849\",\"s_accessibilityFeature\":[\"index\",\"latex\",\"MathML\"],\"s_accessibilityControl\":[\"fullKeyboardControl\",\"fullMouseControl\"],\"s_accessibilityHazard\":[\"flashing\",\"noMotionSimulationHazard\"],\"s_accessibilitySummary\":\"FAKE s_accessibilitySummary\",\"s_accessMode\":[\"textual\",\"visual\",\"textOnVisual\"],\"s_accessModeSufficient\":[\"textual\",\"visual\"],\"rem_source\":\"publisher\",\"rem_metadataSource\":[\"FAKE rem_metadataSource; second; third\"],\"rem_remediatedBy\":[\"FAKE rem_remediatedBy; second; third\"],\"rem_complete\":true,\"rem_coverage\":\"FAKE rem_coverage\",\"rem_remediatedAspects\":[\"linkedToc\",\"addedMathMl\",\"taggedPdf\"],\"rem_textQuality\":\"rekeyed\",\"rem_status\":\"bornAccessible\",\"rem_remediationDate\":\"1960-04-18\",\"rem_comments\":\"FAKE rem_comments\"}]"
+>>>
+<<< ingest | "records" | status = (none) | error = #<Faraday::ConnectionFailed wrapped=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | @exception = #<IngestService::ConnectError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known) @http_status=nil, @http_response=nil, @cause=#<Socket::ResolutionError: Failed to open TCP connection to emma-ingest-staging.internal.lib.virginia.edu:443 (getaddrinfo(3): Name or service not known)>> | DATA: (none)
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_manifests_-_remit_-_member.png
+21.81 s = F
+
+
+Failure:
+ManifestsTest#test_manifests_-_remit_-_member [test/system/manifests_test.rb:769]:
+Some items were not submitted successfully
+
+bin/rails test test/system/manifests_test.rb:188
+
+ManifestsTest#test_manifests_-_import_-_csv_-_edit = 2.42 s = .
+ManifestsTest#test_manifests_-_remit_select_-_member = 0.91 s = .
+ManifestsTest#test_manifests_-_remit_-_anonymous = 0.36 s = .
+ManifestsTest#test_manifests_-_index_-_admin = 0.94 s = .
+ManifestsTest#test_manifests_-_list_all_-_anonymous = 0.39 s = .
+ManifestsTest#test_manifests_-_remit_select_-_admin = 0.86 s = .
+ManifestsTest#test_manifests_-_list_all_-_member = 0.89 s = .
+EnrollmentsTest#test_enrollments_-_delete_-_member = 0.87 s = .
+EnrollmentsTest#test_enrollments_-_index_-_admin = 0.84 s = .
+EnrollmentsTest#test_enrollments_-_show_select_-_member = 0.91 s = .
+EnrollmentsTest#test_enrollments_-_delete_select_-_admin = 0.71 s = .
+EnrollmentsTest#test_enrollments_-_new_-_member = 3.26 s = .
+EnrollmentsTest#test_enrollments_-_edit_-_anonymous = 0.36 s = .
+EnrollmentsTest#test_enrollments_-_show_-_anonymous = 0.37 s = .
+EnrollmentsTest#test_enrollments_-_delete_-_anonymous = 0.37 s = .
+EnrollmentsTest#test_enrollments_-_edit_-_member = 0.94 s = .
+EnrollmentsTest#test_enrollments_-_delete_select_-_anonymous = 0.32 s = .
+EnrollmentsTest#test_enrollments_-_edit_-_admin = 3.81 s = .
+EnrollmentsTest#test_enrollments_-_show_select_-_admin = 0.76 s = .
+EnrollmentsTest#test_enrollments_-_delete_select_-_member = 0.90 s = .
+EnrollmentsTest#test_enrollments_-_index_-_anonymous = 0.33 s = .
+EnrollmentsTest#test_enrollments_-_finalize_-_anonymous = 0.38 s = .
+EnrollmentsTest#test_enrollments_-_show_select_-_anonymous = 0.37 s = .
+EnrollmentsTest#test_enrollments_-_edit_select_-_member = 0.92 s = .
+EnrollmentsTest#test_enrollments_-_edit_select_-_admin = 0.79 s = .
+EnrollmentsTest#test_enrollments_-_delete_-_admin = 5.54 s = .
+EnrollmentsTest#test_enrollments_-_finalize_-_admin = 1.31 s = .
+EnrollmentsTest#test_enrollments_-_index_-_member = 1.09 s = .
+EnrollmentsTest#test_enrollments_-_edit_select_-_anonymous = 0.31 s = .
+EnrollmentsTest#test_enrollments_-_show_-_member = 0.89 s = .
+EnrollmentsTest#test_enrollments_-_finalize_-_member = 0.86 s = .
+EnrollmentsTest#test_enrollments_system_test_coverage = 0.06 s = .
+EnrollmentsTest#test_enrollments_-_show_-_admin = 0.88 s = .
+EnrollmentsTest#test_enrollments_-_new_-_anonymous = 3.24 s = .
+EnrollmentsTest#test_enrollments_-_new_-_admin = 3.24 s = .
+MetricsTest#test_metrics_-_index_-_visit_metrics = TEST SKIPPED - '/metrics' is handled within Rack
+0.07 s = .
+MetricsTest#test_metrics_-_test_-_visit_test_metrics = TEST SKIPPED - Capybara can only deal with HTML results
+0.06 s = .
+MetricsTest#test_metrics_system_test_coverage = 0.05 s = .
+DataTest#test_data_-_index_-_anonymous = 0.39 s = .
+DataTest#test_data_-_index_-_all_data_tables = 0.97 s = .
+DataTest#test_data_-_show_-_member = 0.92 s = .
+DataTest#test_data_-_index_-_two_data_tables = 0.74 s = .
+DataTest#test_data_system_test_coverage = 0.06 s = .
+DataTest#test_data_-_show_-_admin = 0.70 s = .
+DataTest#test_data_-_show_-_anonymous = 0.37 s = .
+DataTest#test_data_-_index_-_one_data_table = 0.73 s = .
+DataTest#test_data_-_index_-_member = 0.90 s = .
+SearchTest#test_search_-_validate_-_standard_identifiers = 0.36 s = .
+SearchTest#test_search_-_index_-_title_search = >>> search | "search" | options = {"title" => "man"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_index_-_title_search.png
+0.65 s = F
+
+
+Failure:
+SearchTest#test_search_-_index_-_title_search [test/system/search_test.rb:215]:
+Browser on page http://localhost/search?title=man and not on http://localhost/search?title=man
+
+bin/rails test test/system/search_test.rb:26
+
+SearchTest#test_search_-_direct_-_title_search = >>> search | "search" | options = {"title" => "man"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_direct_-_title_search.png
+0.57 s = F
+
+
+Failure:
+SearchTest#test_search_-_direct_-_title_search [test/system/search_test.rb:215]:
+Browser on page http://localhost/search/api?title=man and not on http://localhost/search/api?title=man
+
+bin/rails test test/system/search_test.rb:32
+
+SearchTest#test_search_-_download_-_InternetArchive_item = >>> search | "search" | options = {"title" => "the", "repository" => "internetArchive"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_download_-_InternetArchive_item.png
+2.83 s = F
+
+
+Failure:
+SearchTest#test_search_-_download_-_InternetArchive_item [test/system/search_test.rb:339]:
+Empty search results for "http://localhost/search?repository=internetArchive&title=the"
+
+bin/rails test test/system/search_test.rb:58
+
+SearchTest#test_search_-_download_-_ACE_item = >>> search | "search" | options = {"title" => "the", "repository" => "ace"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_download_-_ACE_item.png
+2.85 s = F
+
+
+Failure:
+SearchTest#test_search_-_download_-_ACE_item [test/system/search_test.rb:339]:
+Empty search results for "http://localhost/search?repository=ace&title=the"
+
+bin/rails test test/system/search_test.rb:62
+
+SearchTest#test_search_-_download_-_staff = >>> search | "search" | options = {"title" => "the", "repository" => "emma"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_download_-_staff.png
+2.76 s = F
+
+
+Failure:
+SearchTest#test_search_-_download_-_staff [test/system/search_test.rb:339]:
+Empty search results for "http://localhost/search?repository=emma&title=the"
+
+bin/rails test test/system/search_test.rb:46
+
+SearchTest#test_search_-_download_-_anonymous = >>> search | "search" | options = {"title" => "the", "repository" => "emma"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_download_-_anonymous.png
+2.48 s = F
+
+
+Failure:
+SearchTest#test_search_-_download_-_anonymous [test/system/search_test.rb:339]:
+Empty search results for "http://localhost/search?repository=emma&title=the"
+
+bin/rails test test/system/search_test.rb:42
+
+SearchTest#test_search_system_test_coverage = 0.06 s = .
+SearchTest#test_search_-_download_-_OpenAlex_item = >>> search | "search" | options = {"title" => "the", "repository" => "openAlex"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_download_-_OpenAlex_item.png
+2.80 s = F
+
+
+Failure:
+SearchTest#test_search_-_download_-_OpenAlex_item [test/system/search_test.rb:339]:
+Empty search results for "http://localhost/search?repository=openAlex&title=the"
+
+bin/rails test test/system/search_test.rb:66
+
+SearchTest#test_search_-_download_-_EMMA_native_item = >>> search | "search" | options = {"title" => "the", "repository" => "emma"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_download_-_EMMA_native_item.png
+2.79 s = F
+
+
+Failure:
+SearchTest#test_search_-_download_-_EMMA_native_item [test/system/search_test.rb:339]:
+Empty search results for "http://localhost/search?repository=emma&title=the"
+
+bin/rails test test/system/search_test.rb:50
+
+SearchTest#test_search_-_download_-_BiblioVault_item = >>> search | "search" | options = {"title" => "the", "repository" => "biblioVault"} | headers = {} | BODY:
+>>>
+[Screenshot Image]: /home/sullivm/code/emma/tmp/capybara/failures_test_search_-_download_-_BiblioVault_item.png
+2.80 s = F
+
+
+Failure:
+SearchTest#test_search_-_download_-_BiblioVault_item [test/system/search_test.rb:339]:
+Empty search results for "http://localhost/search?repository=biblioVault&title=the"
+
+bin/rails test test/system/search_test.rb:54
+
+HelpTest#test_help_-_show_-_download_help = 0.71 s = .
+HelpTest#test_help_-_show_-_account_help = 0.37 s = .
+HelpTest#test_help_-_show_-_upload_help = 0.36 s = .
+HelpTest#test_help_-_show_-_organization_help = 0.37 s = .
+HelpTest#test_help_system_test_coverage = 0.05 s = .
+HelpTest#test_help_-_show_-_search_help = 0.74 s = .
+HelpTest#test_help_-_show_-_manifest_help = 1.40 s = .
+HelpTest#test_help_-_show_-_enrollment_help = 0.35 s = .
+UserSessionsTest#test_user/sessions_-_sign_in = 0.86 s = .
+UserSessionsTest#test_user/sessions_-_sign_out = 0.94 s = .
+UserSessionsTest#test_user/sessions_system_test_coverage = 0.06 s = .
+SearchCallsTest#test_search_calls_system_test_coverage = 0.05 s = .
+SearchCallsTest#test_search_calls_-_index = 0.75 s = .
+OrgsTest#test_orgs_-_delete_-_member = 0.91 s = .
+OrgsTest#test_orgs_-_show_select_-_member = 0.70 s = .
+OrgsTest#test_orgs_-_show_current_-_member = 1.38 s = .
+OrgsTest#test_orgs_-_edit_select_-_admin = 0.79 s = .
+OrgsTest#test_orgs_-_delete_select_-_anonymous = 0.36 s = .
+OrgsTest#test_orgs_-_list_all_-_member = 0.90 s = .
+OrgsTest#test_orgs_system_test_coverage = 0.07 s = .
+OrgsTest#test_orgs_-_show_select_-_manager = 0.67 s = .
+OrgsTest#test_orgs_-_edit_current_-_anonymous = 0.38 s = .
+OrgsTest#test_orgs_-_delete_select_-_admin = 0.77 s = .
+OrgsTest#test_orgs_-_edit_current_-_member = 0.89 s = .
+OrgsTest#test_orgs_-_show_current_-_admin = 2.87 s = .
+OrgsTest#test_orgs_-_show_select_-_admin = 0.86 s = .
+OrgsTest#test_orgs_-_new_-_anonymous = 0.41 s = .
+OrgsTest#test_orgs_-_edit_-_admin = 3.62 s = .
+OrgsTest#test_orgs_-_delete_select_-_member = 0.90 s = .
+OrgsTest#test_orgs_-_show_-_anonymous = 0.35 s = .
+OrgsTest#test_orgs_-_delete_-_anonymous = 0.36 s = .
+OrgsTest#test_orgs_-_delete_-_manager = 0.81 s = .
+OrgsTest#test_orgs_-_delete_select_-_manager = 0.71 s = .
+OrgsTest#test_orgs_-_list_all_-_admin = 0.90 s = .
+OrgsTest#test_orgs_-_edit_-_manager = 4.26 s = .
+OrgsTest#test_orgs_-_edit_current_-_admin = 0.77 s = .
+OrgsTest#test_orgs_-_edit_select_-_anonymous = 0.33 s = .
+OrgsTest#test_orgs_-_new_-_admin = 3.98 s = .
+OrgsTest#test_orgs_-_edit_-_anonymous = 0.37 s = .
+OrgsTest#test_orgs_-_list_all_-_anonymous = 0.37 s = .
+OrgsTest#test_orgs_-_index_-_admin = 0.85 s = .
+OrgsTest#test_orgs_-_index_-_member = 1.05 s = .
+OrgsTest#test_orgs_-_delete_-_admin = 5.64 s = .
+OrgsTest#test_orgs_-_index_-_anonymous = 0.44 s = .
+OrgsTest#test_orgs_-_show_select_-_anonymous = 0.42 s = .
+OrgsTest#test_orgs_-_show_current_-_anonymous = 0.47 s = .
+OrgsTest#test_orgs_-_new_-_member = 1.06 s = .
+OrgsTest#test_orgs_-_edit_-_member = 0.97 s = .
+OrgsTest#test_orgs_-_show_-_member = 1.53 s = .
+OrgsTest#test_orgs_-_new_-_manager = 0.85 s = .
+OrgsTest#test_orgs_-_edit_current_-_manager = 3.62 s = .
+OrgsTest#test_orgs_-_edit_select_-_manager = 0.78 s = .
+OrgsTest#test_orgs_-_show_-_admin = 2.96 s = .
+OrgsTest#test_orgs_-_edit_select_-_member = 0.91 s = .
+
+Finished in 538.895870s, 0.5493 runs/s, 3.5591 assertions/s.
+296 runs, 1918 assertions, 19 failures, 4 errors, 0 skips

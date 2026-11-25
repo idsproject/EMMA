@@ -76,3 +76,10 @@ module ChromeResetOriginFix
   end
 end
 Capybara::Selenium::Driver::ChromeDriver.prepend(ChromeResetOriginFix)
+
+# Run the system tests against an external server (e.g. the Go version)
+# by setting APP_HOST, for example APP_HOST=http://localhost:8080.
+if (app_host = ENV['APP_HOST']).present?
+  Capybara.app_host   = app_host
+  Capybara.run_server = false
+end
