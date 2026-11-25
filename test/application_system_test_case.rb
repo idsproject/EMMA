@@ -60,3 +60,19 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
 end
+
+# Chrome 13x+ rejects origin "*" in the CDP Storage.clearDataForOrigin call
+# that Capybara 3.40 makes in ChromeDriver#reset!. Clear cookies for all
+# origins and storage for the app server's own origin instead.
+require 'capybara/selenium/driver'
+module ChromeResetOriginFix
+  def execute_cdp(cmd, params = {})
+    return super unless cmd == 'Storage.clearDataForOrigin' && params[:origin] == '*'
+    super('Network.clearBrowserCookies')
+    if (server = Capybara.current_session.server)
+      super('Storage.clearDataForOrigin',
+            origin: server.base_url, storageTypes: params[:storageTypes])
+    end
+  end
+end
+Capybara::Selenium::Driver::ChromeDriver.prepend(ChromeResetOriginFix)
