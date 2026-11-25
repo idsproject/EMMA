@@ -238,6 +238,26 @@ to Internet Archive. Translate it to Go as a River worker inside the EMMA
 service (`jobs/iasubmit`), triggered on a schedule or by S3 event, instead of
 an AWS Lambda. Disabled unless `IA_ENABLED` is true.
 
+## 4f. Content formerly hosted by UVA
+
+The Rails app fetches some page and email content at runtime from UVA's
+project website, `https://emma.uvacreate.virginia.edu`, which no longer serves
+it (the baseline tests fail with an SSL hostname mismatch):
+
+- About page body: `en.emma.page.about.content_url`
+  (config/locales/page.en.yml), rendered by `external_content_section`
+  (app/helpers/about_helper/main.rb).
+- Welcome email bodies: `body:` URLs in config/locales/mail.en.yml, fetched by
+  `ApplicationMailer#fetch_remote_message`.
+- The project link in config/locales/page.en.yml.
+
+CRITICAL: the Go service must not fetch page or email content from remote
+URLs at request time. Serve this content from local templates under
+`go/internal/views/content/` (initially placeholders with a TODO for IDS
+Network wording) and point the project link at an IDS Network page set by
+`PROJECT_SITE_URL`. A failure to load optional content must never turn a page
+into a 500 error.
+
 ## 5. Go project conventions
 
 Follow the structure, naming, error handling and logging style of
