@@ -203,6 +203,14 @@ Lookup services (app/services/lookup_service: WorldCat, Google Books, Crossref)
 are used to fill in bibliographic metadata. Port them with the same pattern:
 one flag and one API key per service (`WORLDCAT_ENABLED` and so on).
 
+The Math Detective tool (`/tool/md`, app/assets/javascripts/tool/math-detective.js,
+`MD_API_KEY`) calls an external service from the browser. Keep it behind
+`MD_ENABLED` (default off) and hide its menu entry when off.
+
+`GET /upload/records` (UploadController#records) produces the JSON record
+listing UVA used for APTrust preservation backup. Translate it as-is; whether
+IDS uses APTrust is an open question (section 9).
+
 ## 4d. EMMA Unified Index (new companion service)
 
 The Rails app does not contain its search index. It calls two external HTTP
@@ -370,6 +378,18 @@ validation before the next one starts.
 
 Build command: `cd go && go build ./... && go vet ./... && go test ./...`
 
+Test sign-in: the Rails system tests sign in through `/users/sign_in_as?id=`
+and "Sign in as ..." links on the sign-in page, which exist only when
+`Rails.env.test?` (`SIGN_IN_AS` in lib/_constants.rb). The Go service must
+provide the same route and links only when `EMMA_TEST_SIGN_IN=true`, and must
+refuse to start with that flag set unless `DEPLOYMENT=local`.
+
+Running the Rails system tests against Go: set `APP_HOST` to the Go server's
+URL. test/application_system_test_case.rb then sets `Capybara.app_host` to it
+and `Capybara.run_server = false`. The Go server must use the same test
+database (`emma_test`) with the Rails fixtures loaded, so both apps see the
+same orgs, users and uploads.
+
 Reference app: run the Rails app locally only, as the reference for parity
 tests. Point its `SERVICE_SEARCH_*` and `SERVICE_INGEST_*` settings at the new
 emma-index service so search and submission work end to end.
@@ -436,3 +456,6 @@ translate their assertions into Go table-driven tests in the matching package.
 - **Q5 Lookup services**: decide which of WorldCat (OCLC subscription),
   Google Books and Crossref to enable, and get keys.
 - **Q6 Campus sign-in**: revisit CILogon versus SATOSA once members ask for it.
+- **Q7 APTrust**: UVA backed up EMMA submissions to APTrust using
+  `GET /upload/records`. Decide whether IDS will use APTrust or another
+  preservation service; the endpoint is translated either way.
